@@ -62,17 +62,8 @@
 
     <!-- Custom styles for this template -->
     <link href="css/dashboard.css" rel="stylesheet">
-	<link href="../../common/css/custom.css" rel="stylesheet">
+	<!--<link href="../../common/css/custom.css" rel="stylesheet">-->
 
-    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
-    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
-    <!--<script src="../../assets/js/ie-emulation-modes-warning.js"></script>-->
-
-    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
   </head>
 
   <body>
@@ -194,78 +185,10 @@
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script src="../../common/js/bootstrap.js"></script>
-	<script src="../../common/js/canvasjs.min.js"></script>
     <script src="../../common/js/docs.min.js"></script>
-    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <!-- <script src="../../assets/js/ie10-viewport-bug-workaround.js"></script> -->
 	
 	<script type="text/javascript">
-		window.onload = function () {
-			var chart = new CanvasJS.Chart("chartContainer",
-			{
-				title:{
-					text: "In Your Database"
-				},
-				legend:{
-					verticalAlign: "bottom",
-					horizontalAlign: "center"
-				},
-				data: [
-				{        
-					indexLabelFontSize: 12,
-					indexLabelFontFamily: "Monospace",       
-					indexLabelFontColor: "darkgrey", 
-					indexLabelLineColor: "darkgrey",        
-					indexLabelPlacement: "outside",
-					type: "pie",       
-					//showInLegend: true,
-					toolTipContent: "{y} - <strong>#percent%</strong>",
-					dataPoints: [
-						{  y: <?php echo ($queryCount - $numMissing) ?>},
-						{  y: <?php echo $numMissing ?>,exploded: true, indexLabel: "Missing" }
 
-					]
-				}
-				]
-			});
-			var chart2 = new CanvasJS.Chart("chartContainer2",
-			{
-				title:{
-					text: "By Genre"
-				},
-				legend:{
-					verticalAlign: "bottom",
-					horizontalAlign: "center"
-				},
-				data: [
-				{        
-					indexLabelFontSize: 14,
-					indexLabelFontFamily: "Monospace",       
-					indexLabelFontColor: "darkgrey", 
-					indexLabelLineColor: "darkgrey",        
-					indexLabelPlacement: "outside",
-					type: "pie",       
-					//showInLegend: true,
-					toolTipContent: "{y} - <strong>#percent%</strong>",
-					dataPoints: [
-					<?php
-						$other = 0;
-						foreach($a as $v => $value){
-							if ($value > 10 || $ListType == "missing") {
-								echo "\t\t\t\t\t\t{  y: " . $value . ", indexLabel:\"" . $v . "\" },\r\n";
-							} else {
-								$other += $value;
-							}
-						}
-					?>
-						{  y: <?php echo $other; ?>, legendText:"", indexLabel: "Other" }
-					]
-				}
-				]
-			});
-			chart.render();
-			chart2.render();
-		}
 		var CoverImage = "";
 		function UpdateImage(pImage) {
 			$("[data-toggle=popover]").popover({placement: 'bottom', trigger: 'hover', content: "<img src=\"image/coverart/" + pImage + "\">", html: true});
