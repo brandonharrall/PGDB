@@ -77,7 +77,7 @@ CREATE TABLE IF NOT EXISTS `userentries` (
   `EntryID` int(11) NOT NULL AUTO_INCREMENT,
   `TitleID` int(11) NOT NULL,
   `UserID` int(11) NOT NULL,
-  `DistroID` int(11) DEFAULT '7' COMMENT 'FK to game.distromethod.distroID',
+  `DistroID` int(11) NOT NULL COMMENT 'FK to game.distromethod.distroID',
   `Progress` int(11) NOT NULL DEFAULT '0',
   `Wanted` tinyint(1) NOT NULL,
   `Acquired` tinyint(1) NOT NULL,
@@ -121,6 +121,10 @@ ALTER TABLE `userentries`
   ADD CONSTRAINT `userentries_ibfk_1` FOREIGN KEY (`TitleID`) REFERENCES `titles` (`TitleID`) ON DELETE NO ACTION,
   ADD CONSTRAINT `userentries_ibfk_2` FOREIGN KEY (`DistroID`) REFERENCES `distromethod` (`DistroID`) ON DELETE NO ACTION;
 
+--
+-- Insert required entries
+--
+INSERT INTO `distromethod`(`Name`, `DRM`) VALUES ('Other',0)
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
