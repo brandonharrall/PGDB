@@ -106,9 +106,11 @@
 		return $result;
 	}
 	
-	
-	function deleteDistroMethod($dbobj,$pDistroID) {
-		//$UpdateResult = mysqli_query($dbobj, "UPDATE games.userentries SET DistroID = "
+	//Removes a distribution method, updates all user entries using this method to the passed default
+	function deleteDistroMethod($dbobj,$pDistroID,$pDefaultDistro) {
+		$Update = mysqli_query($dbobj, "UPDATE games.userentries SET DistroID = " . $pDefaultDistro .
+			" WHERE DistroID = " . $pDistroID . ";");
+		$Delete = mysqli_query($dbobj, "DELETE FROM games.distromethod WHERE distromethod.DistroID = " . $pDistroID . ";");
 	}
 	/*function escape_string($s, $strip_tags = true) {
 		if ($strip_tags) $s = strip_tags($s);

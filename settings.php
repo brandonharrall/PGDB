@@ -2,6 +2,17 @@
 require_once "config.php";
 require_once "functions.php";
 
+//Get a recordset of distribution methods for use in the update modal later
+$queryResultDistroMethods = queryDistroMethods($con);
+
+$distroIDs = array();
+while($row = mysqli_fetch_array($queryResultDistroMethods)) {
+	if ($row['Name'] == "Other") {
+		$defaultDistro = $row['DistroID'];
+	}
+	$distroIDs[$row['DistroID']] = $row['Name'];
+}
+
 /*if (isset($_GET['list'])) {
 	$ListType = $_GET['list'];
 	if ($ListType == "archive") {
@@ -27,12 +38,9 @@ if (isset($_POST['RemoveDistro'])) {
 	$DistroID = $_POST['DistroID'];
 
 	//Call the Update SQL transaction with passed data
-	deleteDistroMethod($con, $DistroID);
+	deleteDistroMethod($con, $DistroID, $defaultDistro);
 }
 
-//Get a recordset of distribution methods for use in the update modal later
-//*** Change to an array for reusability in both the header and in the Modal
-$queryResultDistroMethods = queryDistroMethods($con);
 /*
 //Pull the results from the recordset above to get the counts of total games in the list, completed, and in progress
 while($row = mysqli_fetch_array($queryGamesIncomplete)) {
@@ -112,24 +120,24 @@ $gamesTotal = $gamesIncomplete + $gamesComplete;*/
               </thead>
               <tbody>
 
-<?php
-	//*** Convert to an array above then change to a For Loop to reuse the array
-	while($row = mysqli_fetch_array($queryResultDistroMethods)) {
+			<?php
+				foreach ($distroIDs as $key => $value) {
+
 					echo "\t\t\t\t<tr>\r\n";
 
 					echo "\t\t\t\t\t<td>&nbsp;</td>\r\n";
-					echo "\t\t\t\t\t<td>" . $row['Name'] . "</td>\r\n";
+					echo "\t\t\t\t\t<td>" . $value . "</td>\r\n";
 					echo "\t\t\t\t\t<td>\r\n";
-					if ($row['Name'] <> 'Other') {
+					if ($value <> 'Other') {
 						echo "\t\t\t\t\t\t<form method='post' class='form-horizontal' role='form'>\r\n";
-						echo "\t\t\t\t\t\t<input type='hidden' id='DistroID' name='DistroID' value='" . $row['DistroID'] . "'>\r\n";
+						echo "\t\t\t\t\t\t<input type='hidden' id='DistroID' name='DistroID' value='" . $key . "'>\r\n";
 						echo "\t\t\t\t\t\t<button action=\"#\" id='RemoveDistro' name='RemoveDistro' type='submit' class='btn btn-primary'>Delete</button>\r\n";
 						echo "\t\t\t\t\t\t</form>\r\n";
 					}
 					echo "\t\t\t\t\t</td>\r\n";
 					echo "\t\t\t\t</tr>\r\n";
-	}
-?>
+				}
+			?>
 
 
               </tbody>

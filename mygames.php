@@ -54,8 +54,15 @@ if (isset($_POST['UpdateUserEntry'])) {
 }
 
 //Get a recordset of distribution methods for use in the update modal later
-//*** Change to an array for reusability in both the header and in the Modal
 $queryResultDistroMethods = queryDistroMethods($con);
+
+$distroIDs = array();
+while($row = mysqli_fetch_array($queryResultDistroMethods)) {
+	if ($row['Name'] == "Other") {
+		$defaultDistro = $row['DistroID'];
+	}
+	$distroIDs[$row['DistroID']] = $row['Name'];
+}
 
 //Pull the results from the recordset above to get the counts of total games in the list, completed, and in progress
 while($row = mysqli_fetch_array($queryGamesIncomplete)) {
@@ -65,6 +72,7 @@ while($row = mysqli_fetch_array($queryGamesComplete)) {
 	$gamesComplete = $row['TitleCount'];
 }
 $gamesTotal = $gamesIncomplete + $gamesComplete;
+
 ?>
 
 <!DOCTYPE html>
@@ -150,50 +158,50 @@ $gamesTotal = $gamesIncomplete + $gamesComplete;
 					$gamesComplete++;
 				  }
 				  $gamesDistro[$row['DistroID']]++;
-					echo "\t\t\t\t<tr>\r\n";
-					echo "\t\t\t\t\t<td>" . $row['ImagePath'] . "</td>\r\n";
-					echo "\t\t\t\t\t<td>" . $row['Title'] . "</td>\r\n";
-					echo "\t\t\t\t\t<td>" . $row['Genre'] . "</td>\r\n";
-					echo "\t\t\t\t\t<td>\r\n";
-					echo "\t\t\t\t\t\t<div class=\"progress\">\r\n";
-					echo "\t\t\t\t\t\t\t<div class=\"progress-bar\" role=\"progressbar\" aria-valuenow=\"" . $row['Progress'] . "\" aria-valuemin=\"0\" aria-valuemax=\"100\" style=\"width: ". $row['Progress'] . "%;\">";
+					echo tabs(4) . "<tr>\r\n";
+					echo tabs(5) . "<td>" . $row['ImagePath'] . "</td>\r\n";
+					echo tabs(5) . "<td>" . $row['Title'] . "</td>\r\n";
+					echo tabs(5) . "<td>" . $row['Genre'] . "</td>\r\n";
+					echo tabs(5) . "<td>\r\n";
+					echo tabs(6) . "<div class=\"progress\">\r\n";
+					echo tabs(7) . "<div class=\"progress-bar\" role=\"progressbar\" aria-valuenow=\"" . $row['Progress'] . "\" aria-valuemin=\"0\" aria-valuemax=\"100\" style=\"width: ". $row['Progress'] . "%;\">";
 					echo $row['Progress'] . "%</div>\t\n";
-					echo "\t\t\t\t\t\t</div>\r\n";
-					echo "\t\t\t\t\t</td>\r\n";
+					echo tabs(6) . "</div>\r\n";
+					echo tabs(5) . "</td>\r\n";
 				  if ($row['Wanted'] == 1) {
 					$gamesWanted++;
-					echo "\t\t\t\t\t<td><span class=\"glyphicon glyphicon-bookmark\"></span></td>\r\n";
+					echo tabs(5) . "<td><span class=\"glyphicon glyphicon-bookmark\"></span></td>\r\n";
 				  } else {
-				    echo "\t\t\t\t\t<td><span></span></td>\r\n";
+				    echo tabs(5) . "<td><span></span></td>\r\n";
 				  }
 				  if ($row['Acquired'] == 1) {
 					$gamesAcquired++;
-					echo "\t\t\t\t\t<td><span class=\"glyphicon glyphicon-check\"></span></td>\r\n";
+					echo tabs(5) . "<td><span class=\"glyphicon glyphicon-check\"></span></td>\r\n";
 				  } else {
-				    echo "\t\t\t\t\t<td><span></span></td>\r\n";
+				    echo tabs(5) . "<td><span></span></td>\r\n";
 				  }
 					switch ($row['Priority']) {
 						case 3:
 							$gamesHighPriority++;
-							echo "\t\t\t\t\t<td><span class=\"glyphicon glyphicon-fire\"></span></td>\r\n";
+							echo tabs(5) . "<td><span class=\"glyphicon glyphicon-fire\"></span></td>\r\n";
 							break;
 						case 2:
-							echo "\t\t\t\t\t<td><span class=\"glyphicon glyphicon-circle-arrow-up\"></span></td>\r\n";
+							echo tabs(5) . "<td><span class=\"glyphicon glyphicon-circle-arrow-up\"></span></td>\r\n";
 							break;
 						case 1:
-							echo "\t\t\t\t\t<td></td>\r\n";
+							echo tabs(5) . "<td></td>\r\n";
 							break;
 						case 0:
-							echo "\t\t\t\t\t<td><span class=\"glyphicon glyphicon-inbox\"></span></td>\r\n";
+							echo tabs(5) . "<td><span class=\"glyphicon glyphicon-inbox\"></span></td>\r\n";
 							break;
 					}
-				  echo "\t\t\t\t\t<td>" . $row['Rating'] . "</td>\r\n";
-				  echo "\t\t\t\t\t<td><button type=\"submit\" class=\"btn btn-info\" " . 
+				  echo tabs(5) . "<td>" . $row['Rating'] . "</td>\r\n";
+				  echo tabs(5) . "<td><button type=\"submit\" class=\"btn btn-info\" " . 
 						"data-toggle=\"modal\" data-target=\".bs-example-modal-sm\" " .
 						"action=\"#\" onclick=\"UpdateModal(" . $row['EntryID'] . "," . $row['Progress'] . 
 						"," . $row['Wanted'] . "," . $row['Acquired'] . "," . $row['Priority'] . 
 						"," . $row['Rating'] . "," . $row['DistroID'] . ");\">Edit</button></td>\r\n";
-				  echo "\t\t\t\t</tr>\r\n";
+				  echo tabs(4) . "</tr>\r\n";
 				}
 ?>
 
@@ -315,12 +323,11 @@ $gamesTotal = $gamesIncomplete + $gamesComplete;
 					</div>
 					<div class="col-xs-6 form-group">
 						<select name="InputDistro" id="InputDistro" class="form-control">
-<?php
-	//*** Convert to an array above then change to a For Loop to reuse the array
-	while($row = mysqli_fetch_array($queryResultDistroMethods)) {
-		echo "<option value=\"" . $row['DistroID'] ."\">" . $row['Name'] . "</option>\r\n";
-	}
-?>
+						<?php
+							foreach ($distroIDs as $key => $value) {
+								echo tabs(7) . "<option value=\"" . $key ."\">" . $value . "</option>\r\n";
+							}
+						?>
 						</select>
 					</div>
 					<div class="form-group">

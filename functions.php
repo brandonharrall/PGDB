@@ -1,5 +1,12 @@
 <?php
 	
+	function tabs($pCount) {
+		$strTabs = "";
+		for ($i = 0; $i < $pCount; $i++) {
+			$strTabs = $strTabs . "\t";
+		}
+		return $strTabs;
+	}
 	function createButtonAddGameToUser($pTitleID,$pUserID,$pList) {
 		echo "\t\t\t\t\t\t<form method=\"post\">\r\n";
 		echo "\t\t\t\t\t\t\t<input type=\"hidden\" id=\"AddGameToUser\" name=\"AddGameToUser\" value=\"1\">\r\n";
