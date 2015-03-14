@@ -1,7 +1,7 @@
 <?php
 
-	require_once "config.php";
-	require_once "functions.php";
+	require_once "include/config.php";
+	require_once "include/functions.php";
 
 	session_start();
 	//$_SESSION['pwd'] = value;
@@ -200,7 +200,7 @@
 
 	</script>
 	<?php
-		mysqli_close($con);
+		$con->close();
 	?>
 	</body>
 </html>

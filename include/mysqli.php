@@ -5,13 +5,17 @@
 	//Open connection to database using config.php params
 	function connect($host, $user, $pass, $db) {
 
-		$link = mysqli_connect($host, $user, $pass, $db);
-		return $link;
-		
+		$link = new mysqli($host, $user, $pass, $db);
+		if (mysqli_connect_errno($link)) {
+			echo "Failed to connect to MySQL: " . mysqli_connect_error();
+		} else {
+			return $link;
+		}
+
 	}
 
 	function queryDBAll($dbobj) {
-		$result = mysqli_query($dbobj,"SELECT titl.TitleID, titl.Title, titl.Genre, titl.CoverArt " .
+		$result = $dbobj->query("SELECT titl.TitleID, titl.Title, titl.Genre, titl.CoverArt " .
 			"FROM titles AS titl " . 
 			"WHERE titl.Active = 1 " .
 			"ORDER BY titl.Title ASC");
@@ -20,7 +24,7 @@
 	
 	//Returns all systems - Name, ID
 	function queryDBSystems($dbobj) {
-		$result = mysqli_query($dbobj,"SELECT sys.Name, sys.ID " .
+		$result = $dbobj->query("SELECT sys.Name, sys.ID " .
 			"FROM system AS sys " . 
 			"WHERE 1 " .
 			"ORDER BY sys.ID ASC");
@@ -30,7 +34,8 @@
 	
 //*** Could be rolled into the query following it
 	function queryDBActiveByUser($dbobj,$pUserID) {
-		$result = mysqli_query($dbobj,"SELECT uent.EntryID, titl.Title, titl.Genre, uent.Progress, uent.Wanted, uent.Acquired, uent.Priority, uent.Rating, uent.DistroID, dist.ImagePath " .
+		$pUserID = $dbobj->real_escape_string($pUserID);
+		$result = $dbobj->query("SELECT uent.EntryID, titl.Title, titl.Genre, uent.Progress, uent.Wanted, uent.Acquired, uent.Priority, uent.Rating, uent.DistroID, dist.ImagePath " .
 			"FROM userentries AS uent " . 
 			"LEFT JOIN titles AS titl on uent.TitleID = titl.TitleID " .
 			"LEFT JOIN distromethod as dist on dist.DistroID = uent.DistroID " .
@@ -40,7 +45,7 @@
 	}
 	
 	function queryDBArchiveByUser($dbobj,$pUserID) {
-		$result = mysqli_query($dbobj,"SELECT uent.EntryID, titl.Title, titl.Genre, uent.Progress, uent.Wanted, uent.Acquired, uent.Priority, uent.Rating, uent.DistroID, dist.ImagePath " .
+		$result = $dbobj->query("SELECT uent.EntryID, titl.Title, titl.Genre, uent.Progress, uent.Wanted, uent.Acquired, uent.Priority, uent.Rating, uent.DistroID, dist.ImagePath " .
 			"FROM userentries AS uent " . 
 			"LEFT JOIN titles AS titl on uent.TitleID = titl.TitleID " .
 			"LEFT JOIN distromethod as dist on dist.DistroID = uent.DistroID " .
@@ -52,11 +57,11 @@
 //*** Very heavy hitting query, needs to be complete rewritten
 	function queryDBDoesUserHaveTitle($dbobj,$pTitleID,$pUserID) {
 
-		$result = mysqli_query($dbobj,"SELECT EntryID FROM userentries as UENT " .
+		$result = $dbobj->query("SELECT EntryID FROM userentries as UENT " .
 			"JOIN titles as TITL on TITL.TitleID = UENT.TitleID " .
 			"WHERE TITL.TitleID = " . $pTitleID . " " .
 			"AND UENT.UserID = " . $pUserID);
-		if(mysqli_num_rows($result) == 0) {
+		if($result->num_rows == 0) {
 			return "false";
 		} else {
 			return "true";
@@ -64,42 +69,42 @@
 	}
 	
 	function queryDistroMethods($dbobj) {
-		$result = mysqli_query($dbobj,"SELECT DistroID, Name FROM distromethod");
+		$result = $dbobj->query("SELECT DistroID, Name FROM distromethod");
 		return $result;
 	}
 	
 	function queryCountCompleteTitles($dbobj, $archived) {
 		if ($archived) {
-			$result = mysqli_query($dbobj,"SELECT Count(EntryID) as TitleCount FROM `userentries` WHERE Progress = 100 AND Priority = 0");
+			$result = $dbobj->query("SELECT Count(EntryID) as TitleCount FROM `userentries` WHERE Progress = 100 AND Priority = 0");
 		} else {
-			$result = mysqli_query($dbobj,"SELECT Count(EntryID) as TitleCount FROM `userentries` WHERE Progress = 100 AND Priority > 0");
+			$result = $dbobj->query("SELECT Count(EntryID) as TitleCount FROM `userentries` WHERE Progress = 100 AND Priority > 0");
 		}
 		return $result;
 	}
 	function queryCountInCompleteTitles($dbobj, $archived) {
 		if ($archived) {
-			$result = mysqli_query($dbobj,"SELECT Count(EntryID) as TitleCount FROM `userentries` WHERE Progress < 100 AND Priority = 0");
+			$result = $dbobj->query("SELECT Count(EntryID) as TitleCount FROM `userentries` WHERE Progress < 100 AND Priority = 0");
 		} else {
-			$result = mysqli_query($dbobj,"SELECT Count(EntryID) as TitleCount FROM `userentries` WHERE Progress < 100 AND Priority > 0");
+			$result = $dbobj->query("SELECT Count(EntryID) as TitleCount FROM `userentries` WHERE Progress < 100 AND Priority > 0");
 		}
 		return $result;
 	}
 	
 	function insertTitle($dbobj,$pSystem,$pTitle,$pGenre,$pActive,$pYear) {
-		$result = mysqli_query($dbobj, "INSERT INTO `games`.`titles` (`SystemID`, `Title`, `Genre`, `Active`, `ReleaseDate`) " . 
+		$result = $dbobj->query("INSERT INTO `games`.`titles` (`SystemID`, `Title`, `Genre`, `Active`, `ReleaseDate`) " . 
 			"VALUES (" . $pSystem . ", '" . $pTitle . "', '" . $pGenre . "', " . $pActive . ", " . $pYear . ");");
 		return $result;
 	}
 
 	function insertTitleForUser($dbobj,$pTitleID,$pUserID) {
 		//TO DO: allow progress, wanted, and acquired
-		$result = mysqli_query($dbobj, "INSERT INTO `games`.`userentries` (`TitleID`, `UserID`, `Progress`, `Wanted`, `Acquired`) " .
+		$result = $dbobj->query("INSERT INTO `games`.`userentries` (`TitleID`, `UserID`, `Progress`, `Wanted`, `Acquired`) " .
 			"VALUES ('" . $pTitleID . "', '" . $pUserID . "', '0', '0', '1');");
 		return $result;
 	}
 	
 	function updateEntryForUser($dbobj,$pEntryID,$pProgress,$pWanted,$pAcquired,$pPriority,$pRating,$pDistro) {
-		$result = mysqli_query($dbobj, "UPDATE games.userentries SET Progress=" . $pProgress . ", Wanted = " . $pWanted . ", Acquired = " . $pAcquired . 
+		$result = $dbobj->query("UPDATE games.userentries SET Progress=" . $pProgress . ", Wanted = " . $pWanted . ", Acquired = " . $pAcquired . 
 			", Priority = " . $pPriority . ", Rating = " . $pRating . 
 			", DistroID = " . $pDistro . 
 			" WHERE EntryID = " . $pEntryID . ";");
@@ -108,9 +113,9 @@
 	
 	//Removes a distribution method, updates all user entries using this method to the passed default
 	function deleteDistroMethod($dbobj,$pDistroID,$pDefaultDistro) {
-		$Update = mysqli_query($dbobj, "UPDATE games.userentries SET DistroID = " . $pDefaultDistro .
+		$Update = $dbobj->query("UPDATE games.userentries SET DistroID = " . $pDefaultDistro .
 			" WHERE DistroID = " . $pDistroID . ";");
-		$Delete = mysqli_query($dbobj, "DELETE FROM games.distromethod WHERE distromethod.DistroID = " . $pDistroID . ";");
+		$Delete = $dbobj->query("DELETE FROM games.distromethod WHERE distromethod.DistroID = " . $pDistroID . ";");
 	}
 	/*function escape_string($s, $strip_tags = true) {
 		if ($strip_tags) $s = strip_tags($s);
@@ -131,8 +136,4 @@
 		return $result;
 	}*/
 	
-	//Tidy and close the database connection
-	function closeDB() {
-		return mysqli_close($link);
-	}
 ?>

@@ -1,7 +1,7 @@
 <?php
 
-require_once "config.php";
-require_once "functions.php";
+require_once "include/config.php";
+require_once "include/functions.php";
 
 if (isset($_GET['list'])) {
 	$ListType = $_GET['list'];
@@ -345,7 +345,7 @@ $gamesTotal = $gamesIncomplete + $gamesComplete;
  </div>
 
 	<?php
-		mysqli_close($con);
+		$con->close();
 	?>
 	
   </body>
