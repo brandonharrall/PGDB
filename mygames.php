@@ -57,20 +57,25 @@ if (isset($_POST['UpdateUserEntry'])) {
 $queryResultDistroMethods = queryDistroMethods($con);
 
 $distroIDs = array();
-while($row = mysqli_fetch_array($queryResultDistroMethods)) {
+while($row = $queryResultDistroMethods->fetch_array()) {
 	if ($row['Name'] == "Other") {
 		$defaultDistro = $row['DistroID'];
 	}
 	$distroIDs[$row['DistroID']] = $row['Name'];
 }
+$queryResultDistroMethods->free();
 
 //Pull the results from the recordset above to get the counts of total games in the list, completed, and in progress
-while($row = mysqli_fetch_array($queryGamesIncomplete)) {
+while($row = $queryGamesIncomplete->fetch_array()) {
 	$gamesIncomplete = $row['TitleCount'];
 }
-while($row = mysqli_fetch_array($queryGamesComplete)) {
+$queryGamesIncomplete->free();
+
+while($row = $queryGamesComplete->fetch_array()) {
 	$gamesComplete = $row['TitleCount'];
 }
+$queryGamesComplete->free();
+
 $gamesTotal = $gamesIncomplete + $gamesComplete;
 
 ?>
@@ -114,20 +119,6 @@ $gamesTotal = $gamesIncomplete + $gamesComplete;
 				  </div>
 				</div>
             </div>
-            <div class="col-xs-6 col-sm-6 placeholder">
-				<div class="progress">
-				  <div class="progress-bar progress-bar-success" style="width: 35%">
-					<span class="sr-only">35% Complete (success)</span>
-				  </div>
-				  <div class="progress-bar progress-bar-warning progress-bar-striped" style="width: 20%">
-					<span class="sr-only">20% Complete (warning)</span>
-				  </div>
-				  <div class="progress-bar progress-bar-danger" style="width: 10%">
-					<span class="sr-only">10% Complete (danger)</span>
-				  </div>
-				</div>
-            </div>
-
           </div>
 
           <h2 class="sub-header">Your Games</h2>
@@ -148,16 +139,14 @@ $gamesTotal = $gamesIncomplete + $gamesComplete;
               </thead>
               <tbody>
 <?php	
-				$gamesComplete = 0;
+				//Keep track of stats
 				$gamesWanted = 0;
 				$gamesAcquired = 0;
 				$gamesHighPriority = 0;
-				$gamesDistro = array(0,0,0,0,0,0,0,0,0);
-				while($row = mysqli_fetch_array($queryResult)) {
-				  if ($row['Progress'] == "100") {
-					$gamesComplete++;
-				  }
-				  $gamesDistro[$row['DistroID']]++;
+				
+				//$gamesDistro = [];
+				while($row = $queryResult->fetch_array()) {
+				  //$gamesDistro[$row['DistroID']]++;
 					echo tabs(4) . "<tr>\r\n";
 					echo tabs(5) . "<td>" . $row['ImagePath'] . "</td>\r\n";
 					echo tabs(5) . "<td>" . $row['Title'] . "</td>\r\n";
@@ -216,9 +205,8 @@ $gamesTotal = $gamesIncomplete + $gamesComplete;
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-    <script src="../../common/js/bootstrap.js"></script>
-	<script src="../../common/js/canvasjs.min.js"></script>
-    <script src="../../common/js/docs.min.js"></script>
+    <script src="js/bootstrap.js"></script>
+    <script src="js/docs.min.js"></script>
 	
 
 	<script>

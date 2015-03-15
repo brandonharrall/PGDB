@@ -184,8 +184,8 @@
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-    <script src="../../common/js/bootstrap.js"></script>
-    <script src="../../common/js/docs.min.js"></script>
+    <script src="js/bootstrap.js"></script>
+    <script src="js/docs.min.js"></script>
 	
 	<script type="text/javascript">
 
