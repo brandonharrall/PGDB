@@ -125,6 +125,7 @@ ALTER TABLE `userentries`
 -- Insert required entries
 --
 INSERT INTO `distromethod`(`Name`, `DRM`) VALUES ('Other',0)
+INSERT INTO `users`(`Role`,`UserName`,`Password`,`Active`) VALUES (1,'YourUser','unusedpw',1)
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

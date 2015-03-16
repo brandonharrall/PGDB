@@ -129,7 +129,7 @@
 <?php	
 				$a = [];
 				$numMissing = 0;
-				while($row = mysqli_fetch_array($queryResult)) {
+				while($row = $queryResult->fetch_array()) {
 					if ($ListType == "missing") {
 						if (queryDBDoesUserHaveTitle($con,$row['TitleID'], 1) == "false") {
 							echo "\t\t\t\t<tr>\r\n";

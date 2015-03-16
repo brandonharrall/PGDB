@@ -187,7 +187,7 @@ $gamesTotal = $gamesIncomplete + $gamesComplete;
 				  echo tabs(5) . "<td>" . $row['Rating'] . "</td>\r\n";
 				  echo tabs(5) . "<td><button type=\"submit\" class=\"btn btn-info\" " . 
 						"data-toggle=\"modal\" data-target=\".bs-example-modal-sm\" " .
-						"action=\"#\" onclick=\"UpdateModal(" . $row['EntryID'] . "," . $row['Progress'] . 
+						"action=\"#\" onclick=\"UpdateModal(" . $row['EntryID'] . ",'" . $row['Title'] . "'," . $row['Progress'] . 
 						"," . $row['Wanted'] . "," . $row['Acquired'] . "," . $row['Priority'] . 
 						"," . $row['Rating'] . "," . $row['DistroID'] . ");\">Edit</button></td>\r\n";
 				  echo tabs(4) . "</tr>\r\n";
@@ -207,47 +207,7 @@ $gamesTotal = $gamesIncomplete + $gamesComplete;
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script src="js/bootstrap.js"></script>
     <script src="js/docs.min.js"></script>
-	
-
-	<script>
-		function UpdateModal(pEntryID,pProgress,pWanted,pAcquired,pPriority,pRating,pDistro) {
-			var eleEntryID;
-			var eleProgress;
-			var eleWanted;
-			var eleAcquired;
-			var elePriority0;
-			var elePriority1;
-			var elePriority2;
-			var eleRating;
-			var eleDistro;
-			var eleTitle;
-			eleEntryID = document.getElementById("UpdateUserEntry");
-			eleProgress = document.getElementById("InputComplete");
-			eleWanted = document.getElementById("InputWanted");
-			eleAcquired = document.getElementById("InputAcquired");
-			elePriority0 = document.getElementById("optionsPriorityArchive");
-			elePriority1 = document.getElementById("optionsPriorityLow");
-			elePriority2 = document.getElementById("optionsPriorityMed");
-			elePriority3 = document.getElementById("optionsPriorityHigh");
-			eleRating = document.getElementById("InputRating");
-			eleDistro = document.getElementById("InputDistro");
-			eleEntryID.value = pEntryID;
-			eleProgress.value = pProgress;
-			eleWanted.checked = pWanted;
-			eleAcquired.checked = pAcquired;
-			if (pPriority == 0) {
-				elePriority0.checked = 1;
-			} else if (pPriority == 1) {
-				elePriority1.checked = 1;
-			} else if (pPriority == 2) {
-				elePriority2.checked = 1;
-			} else if (pPriority == 3) {
-				elePriority3.checked = 1;
-			}
-			eleRating.value = pRating;
-			eleDistro.value = pDistro;
-		}
-	</script>
+    <script src="js/sitescripts.js"></script>
 	
 	<div class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
 	  <div class="modal-dialog modal-sm">
@@ -255,7 +215,7 @@ $gamesTotal = $gamesIncomplete + $gamesComplete;
 			<form method="post" class="form-horizontal" role="form">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-					<h4 class="modal-title">Edit Entry</h4>
+					<h4 id="ModalTitle" class="modal-title">Edit Entry</h4>
 				</div>
 				<div class="modal-body" style="padding-left:35px">
 					<div class="form-group">
@@ -309,7 +269,7 @@ $gamesTotal = $gamesIncomplete + $gamesComplete;
 						<input type="text" class="form-control" name="InputRating" id="InputRating" placeholder="0">
 					  </div>
 					</div>
-					<div class="col-xs-6 form-group">
+					<div class="col-xs-12 form-group">
 						<select name="InputDistro" id="InputDistro" class="form-control">
 						<?php
 							foreach ($distroIDs as $key => $value) {

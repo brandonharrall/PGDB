@@ -5,12 +5,9 @@ Uses Boostrap (included) for ease of design
 
 Future Tasks
 
-  * [HIGH] Escape Input (in progress...)
-  * [MED] Switch to mysqli (in progress...)
   * [MED] Review constraints and PK/FKs
   * [HIGH] Make DB updates using cURL
   * [MED] Implement search function
-  * [HIGH] Add passworded access
   * [HIGH] Complete Settings page
     * Complete Adding Distribution methods
     * Add Systems management
@@ -19,3 +16,7 @@ Future Tasks
   * [LOW] Add multi-user support
 
 NOTES: This is not suitable for internet facing servers yet. It is highly recommended to block access from outside.
+
+Screenshots:
+	![Active Games](/images/screenshots/PGDB_ActiveGames.jpg)
+	![Updating an Active Game](/images/screenshots/PGDB_UpdateEntry.jpg)
