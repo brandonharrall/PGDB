@@ -18,5 +18,5 @@ Future Tasks
 NOTES: This is not suitable for internet facing servers yet. It is highly recommended to block access from outside.
 
 Screenshots:
-	![Active Games](/images/screenshots/PGDB_ActiveGames.jpg)
-	![Updating an Active Game](/images/screenshots/PGDB_UpdateEntry.jpg)
+	![Active Games](/image/screenshots/PGDB_ActiveGames.jpg)
+	![Updating an Active Game](/image/screenshots/PGDB_UpdateEntry.jpg)
