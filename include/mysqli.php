@@ -1,6 +1,4 @@
 <?php
-
-//*** In general this should be updated to MySQLI
 	
 	//Open connection to database using config.php params
 	function connect($host, $user, $pass, $db) {
@@ -14,12 +12,27 @@
 
 	}
 
+/**         **/
+/** SELECTS **/
+/**         **/
+	
 	function queryDBAll($dbobj) {
 		$result = $dbobj->query("SELECT titl.TitleID, titl.Title, titl.Genre, titl.CoverArt " .
 			"FROM titles AS titl " . 
 			"WHERE titl.Active = 1 " .
 			"ORDER BY titl.Title ASC");
+		/*$dbArray = array();
+		while($row = $result->fetch_array()) {
+			$dbArray["ID"] = 	$row['TitleID'];
+			$dbArray["Title"] = $row['Title'];
+			$dbArray["Genre"] = $row['Genre'];
+			$dbArray["Cover"] = $row['CoverArt'];
+		}
+			var_dump($dbArray[113]);
+		
+		$result->free();*/
 		return $result;
+		//return $dbArray;
 	}
 	
 	//Returns all systems - Name, ID
@@ -34,7 +47,6 @@
 	
 //*** Could be rolled into the query following it
 	function queryDBActiveByUser($dbobj,$pUserID) {
-		$pUserID = $dbobj->real_escape_string($pUserID);
 		$result = $dbobj->query("SELECT uent.EntryID, titl.Title, titl.Genre, uent.Progress, uent.Wanted, uent.Acquired, uent.Priority, uent.Rating, uent.DistroID, dist.ImagePath " .
 			"FROM userentries AS uent " . 
 			"LEFT JOIN titles AS titl on uent.TitleID = titl.TitleID " .
@@ -56,11 +68,14 @@
 
 //*** Very heavy hitting query, needs to be complete rewritten
 	function queryDBDoesUserHaveTitle($dbobj,$pTitleID,$pUserID) {
-
-		$result = $dbobj->query("SELECT EntryID FROM userentries as UENT " .
+		$statement = $dbobj->prepare("SELECT EntryID FROM userentries as UENT " .
 			"JOIN titles as TITL on TITL.TitleID = UENT.TitleID " .
-			"WHERE TITL.TitleID = " . $pTitleID . " " .
-			"AND UENT.UserID = " . $pUserID);
+			"WHERE TITL.TitleID = ? " .
+			"AND UENT.UserID = ?");
+		$statement->bind_param('si',$pTitleID,$pUserID);
+		$statement->execute();
+		$result = $statement->get_result();
+		$statement->close();
 		if($result->num_rows == 0) {
 			return "false";
 		} else {
@@ -73,67 +88,72 @@
 		return $result;
 	}
 	
-	function queryCountCompleteTitles($dbobj, $archived) {
+	function queryCountTitles($dbobj, $archived, $complete) {
 		if ($archived) {
-			$result = $dbobj->query("SELECT Count(EntryID) as TitleCount FROM `userentries` WHERE Progress = 100 AND Priority = 0");
+			if ($complete) {
+				$result = $dbobj->query("SELECT Count(EntryID) as TitleCount FROM `userentries` WHERE Progress = 100 AND Priority = 0");
+			} else {
+				$result = $dbobj->query("SELECT Count(EntryID) as TitleCount FROM `userentries` WHERE Progress < 100 AND Priority = 0");
+			}
 		} else {
-			$result = $dbobj->query("SELECT Count(EntryID) as TitleCount FROM `userentries` WHERE Progress = 100 AND Priority > 0");
+			if ($complete) {
+				$result = $dbobj->query("SELECT Count(EntryID) as TitleCount FROM `userentries` WHERE Progress = 100 AND Priority > 0");
+			} else {
+				$result = $dbobj->query("SELECT Count(EntryID) as TitleCount FROM `userentries` WHERE Progress < 100 AND Priority > 0");
+			}
 		}
 		return $result;
 	}
-	function queryCountInCompleteTitles($dbobj, $archived) {
-		if ($archived) {
-			$result = $dbobj->query("SELECT Count(EntryID) as TitleCount FROM `userentries` WHERE Progress < 100 AND Priority = 0");
-		} else {
-			$result = $dbobj->query("SELECT Count(EntryID) as TitleCount FROM `userentries` WHERE Progress < 100 AND Priority > 0");
-		}
-		return $result;
-	}
+
+/**         **/	
+/** INSERTS **/
+/**         **/
 	
 	function insertTitle($dbobj,$pSystem,$pTitle,$pGenre,$pActive,$pYear) {
-		$result = $dbobj->query("INSERT INTO `games`.`titles` (`SystemID`, `Title`, `Genre`, `Active`, `ReleaseDate`) " . 
-			"VALUES (" . $pSystem . ", '" . $pTitle . "', '" . $pGenre . "', " . $pActive . ", " . $pYear . ");");
-		return $result;
+		$statement = $dbobj->prepare("INSERT INTO `games`.`titles` (`SystemID`, `Title`, `Genre`, `Active`, `ReleaseDate`) " . 
+			"VALUES (?, ?, ?, ?, ?);");
+		$statement->bind_param('issii',$pSystem,$pTitle,$pGenre,$pActive,$pYear);
+		$statement->execute();
+		$statement->close();
 	}
 
 	function insertTitleForUser($dbobj,$pTitleID,$pUserID) {
 		//TO DO: allow progress, wanted, and acquired
-		$result = $dbobj->query("INSERT INTO `games`.`userentries` (`TitleID`, `UserID`, `Progress`, `Wanted`, `Acquired`) " .
-			"VALUES ('" . $pTitleID . "', '" . $pUserID . "', '0', '0', '1');");
-		return $result;
+		$statement = $dbobj->prepare("INSERT INTO `games`.`userentries` (`TitleID`, `UserID`, `Progress`, `Wanted`, `Acquired`) " .
+			"VALUES (?, ?, '0', '0', '1');");
+		$statement->bind_param('ii',$pTitleID,$pUserID);
+		$statement->execute();
+		$statement->close();
 	}
 	
 	function updateEntryForUser($dbobj,$pEntryID,$pProgress,$pWanted,$pAcquired,$pPriority,$pRating,$pDistro) {
-		$result = $dbobj->query("UPDATE games.userentries SET Progress=" . $pProgress . ", Wanted = " . $pWanted . ", Acquired = " . $pAcquired . 
-			", Priority = " . $pPriority . ", Rating = " . $pRating . 
-			", DistroID = " . $pDistro . 
-			" WHERE EntryID = " . $pEntryID . ";");
-		return $result;
+		$statement = $dbobj->prepare("UPDATE games.userentries SET Progress=?, Wanted=?, Acquired=?" . 
+			", Priority=?, Rating=?, DistroID=?" . 
+			" WHERE EntryID=?;");
+		$statement->bind_param('iiiiiii',$pProgress,$pWanted,$pAcquired,$pPriority,$pRating,$pDistro,$pEntryID);
+		$statement->execute();
+		$statement->close();
 	}
 	
+	
+/**         **/
+/** DELETES **/
+/**         **/
+
 	//Removes a distribution method, updates all user entries using this method to the passed default
 	function deleteDistroMethod($dbobj,$pDistroID,$pDefaultDistro) {
-		$Update = $dbobj->query("UPDATE games.userentries SET DistroID = " . $pDefaultDistro .
-			" WHERE DistroID = " . $pDistroID . ";");
-		$Delete = $dbobj->query("DELETE FROM games.distromethod WHERE distromethod.DistroID = " . $pDistroID . ";");
+		//Update all distros that match the one being deleted to a passed default
+		$updatestmt = $dbobj->prepare("UPDATE games.userentries SET DistroID=? WHERE DistroID=?;");
+		$updatestmt->bind_param('ii',$pDefaultDistro,$pDistroID);
+		$updatestmt->execute();
+		$updatestmt->close();
+		
+		//Remove distro from DB
+		$deletestmt = $dbobj->prepare("DELETE FROM games.distromethod WHERE distromethod.DistroID=?;");
+		$deletestmt->bind_param('i',$pDistroID);
+		$deletestmt->execute();
+		$deletestmt->close();
 	}
-	/*function escape_string($s, $strip_tags = true) {
-		if ($strip_tags) $s = strip_tags($s);
-
-		return mysqli_real_escape_string($this->link, $s);
-	}*/
 	
-	/*function query($query, $die_on_error = true) {
-		$result = @mysqli_query($this->link, $query);
-		if (!$result) {
-			$error = @mysqli_error($this->link);
-
-			@mysqli_query($this->link, "ROLLBACK");
-			user_error("Query $query failed: " . ($this->link ? $error : "No connection"),
-				$die_on_error ? E_USER_ERROR : E_USER_WARNING);
-		}
-
-		return $result;
-	}*/
 	
 ?>

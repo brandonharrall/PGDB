@@ -9,8 +9,8 @@ if (isset($_GET['list'])) {
 		$queryResult = queryDBArchiveByUser($con, 1);
 		$activeHeader = "Archived Games";
 		//Get the count of both complete and incomplete titles for archived games
-		$queryGamesIncomplete = queryCountInCompleteTitles($con, True);
-		$queryGamesComplete = queryCountCompleteTitles($con, True);
+		$queryGamesIncomplete = queryCountTitles($con, True, False);
+		$queryGamesComplete = queryCountTitles($con, True, True);
 	}
 } else {
 	$ListType = "mygames";
@@ -19,8 +19,8 @@ if (isset($_GET['list'])) {
 	$queryCount = $queryResult->num_rows;
 	
 	//Get the count of both complete and incomplete titles for active games
-	$queryGamesIncomplete = queryCountInCompleteTitles($con, False);
-	$queryGamesComplete = queryCountCompleteTitles($con, False);
+	$queryGamesIncomplete = queryCountTitles($con, False, False);
+	$queryGamesComplete = queryCountTitles($con, False, True);
 }
 
 //If a post was performed to update a users entry send the DB Query to make the update
@@ -219,7 +219,7 @@ $gamesTotal = $gamesIncomplete + $gamesComplete;
 				</div>
 				<div class="modal-body" style="padding-left:35px">
 					<div class="form-group">
-					  <div class="col-xs-4 form-group">
+					  <div class="col-xs-6 form-group">
 						<label for="InputComplete">% Complete</label>
 						<input type="text" class="form-control" name="InputComplete" id="InputComplete" placeholder="100">
 					  </div>
