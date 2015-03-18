@@ -28,33 +28,48 @@
 	}
 
 
-	function buildNavBar() {
-	
-		echo "<div class=\"navbar navbar-inverse navbar-fixed-top\" role=\"navigation\">\r\n";
-		echo "\t\t<div class=\"container-fluid\">\r\n";
-        echo "\t\t\t<div class=\"navbar-header\">\t\n";
-        echo "\t\t\t\t<button type=\"button\" class=\"navbar-toggle collapsed\" data-toggle=\"collapse\" data-target=\".navbar-collapse\">\r\n";
-		echo "\t\t\t\t\t<span class=\"sr-only\">Toggle navigation</span>\r\n";
-        echo "\t\t\t\t\t<span class=\"icon-bar\"></span>\r\n";
-        echo "\t\t\t\t\t<span class=\"icon-bar\"></span>\r\n";
-        echo "\t\t\t\t\t<span class=\"icon-bar\"></span>\r\n";
-        echo "\t\t\t\t</button>\r\n";
+	function buildNavBar($pLoggedIn,$pUserName) {
+		if ($pLoggedIn) {
+			echo "<div class=\"navbar navbar-inverse navbar-fixed-top\" role=\"navigation\">\r\n";
+			echo "\t\t<div class=\"container-fluid\">\r\n";
+			echo "\t\t\t<div class=\"navbar-header\">\t\n";
+			echo "\t\t\t\t<button type=\"button\" class=\"navbar-toggle collapsed\" data-toggle=\"collapse\" data-target=\".navbar-collapse\">\r\n";
+			echo "\t\t\t\t\t<span class=\"sr-only\">Toggle navigation</span>\r\n";
+			echo "\t\t\t\t\t<span class=\"icon-bar\"></span>\r\n";
+			echo "\t\t\t\t\t<span class=\"icon-bar\"></span>\r\n";
+			echo "\t\t\t\t\t<span class=\"icon-bar\"></span>\r\n";
+			echo "\t\t\t\t</button>\r\n";
 
-        echo "\t\t\t</div>\r\n";
-        echo "\t\t\t<div class=\"navbar-collapse collapse\">\r\n";
-        echo "\t\t\t\t<ul class=\"nav navbar-nav navbar-right\">\r\n";
-        echo "\t\t\t\t\t<li><a href=\"#\">Dashboard</a></li>\r\n";
-        echo "\t\t\t\t\t<li><a href=\"settings.php\">Settings</a></li>\r\n";
-        echo "\t\t\t\t\t<li><a href=\"#\">Profile</a></li>\r\n";
-        echo "\t\t\t\t\t<li><a href=\"#\">Help</a></li>\r\n";
-        echo "\t\t\t\t</ul>\r\n";
-        echo "\t\t\t\t<form class=\"navbar-form navbar-right\">\r\n";
-        echo "\t\t\t\t\t<input type=\"text\" class=\"form-control\" placeholder=\"Search...\">\r\n";
-        echo "\t\t\t\t</form>\r\n";
-        echo "\t\t\t</div>\r\n";
-		echo "\t\t</div>\r\n";
-		echo "\t</div>\r\n";
-		
+			echo "\t\t\t</div>\r\n";
+			echo "\t\t\t<div class=\"navbar-collapse collapse\">\r\n";
+			echo "\t\t\t\t<ul class=\"nav navbar-nav navbar-right\">\r\n";
+			echo "\t\t\t\t\t<li><a href=\"settings.php\">Settings</a></li>\r\n";
+			echo "\t\t\t\t\t<li><a href=\"#\">$pUserName</a></li>\r\n";
+			echo "<li><form method='post' class='form-inline' role='form' action='login.php'>\r\n";
+			echo "<input type='hidden' class='form-control' name='logout' id='logout' value=''>\r\n";
+			echo "<button id='logoutbutton' type='submit' class='btn btn-link'>Log Out</button>\r\n";
+			echo "</form></li>\r\n";
+			echo "\t\t\t\t</ul>\r\n";
+			echo "\t\t\t\t<form class=\"navbar-form navbar-right\">\r\n";
+			echo "\t\t\t\t\t<input type=\"text\" class=\"form-control\" placeholder=\"Search...\">\r\n";
+			echo "\t\t\t\t</form>\r\n";
+			echo "\t\t\t</div>\r\n";
+			echo "\t\t</div>\r\n";
+			echo "\t</div>\r\n";
+		} else {
+			echo "<div class=\"navbar navbar-inverse navbar-fixed-top\" role=\"navigation\">\r\n";
+			echo "\t\t<div class=\"container-fluid\">\r\n";
+			echo "\t\t\t<div class=\"navbar-header\">\t\n";
+			echo "\t\t\t\t<button type=\"button\" class=\"navbar-toggle collapsed\" data-toggle=\"collapse\" data-target=\".navbar-collapse\">\r\n";
+			echo "\t\t\t\t\t<span class=\"sr-only\">Toggle navigation</span>\r\n";
+			echo "\t\t\t\t\t<span class=\"icon-bar\"></span>\r\n";
+			echo "\t\t\t\t\t<span class=\"icon-bar\"></span>\r\n";
+			echo "\t\t\t\t\t<span class=\"icon-bar\"></span>\r\n";
+			echo "\t\t\t\t</button>\r\n";
+			echo "\t\t\t</div>\r\n";
+			echo "\t\t</div>\r\n";
+			echo "\t</div>\r\n";
+		}
 	}
 	
 	function buildSideBar($pActive) {

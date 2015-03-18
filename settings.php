@@ -2,6 +2,17 @@
 require_once "include/config.php";
 require_once "include/functions.php";
 
+	session_start();
+	//If the user has logged in, get their information
+	if (isset($_SESSION['user'])) {
+		$userName = $_SESSION['user'];
+		$userID = $_SESSION['UserID'];
+		$userRole = $_SESSION['Role'];
+	} else {
+		//User is not authed, kick out to login page
+		header('location: /pgdb/login.php');
+	}
+
 //Get a recordset of distribution methods for use in the update modal later
 $queryResultDistroMethods = queryDistroMethods($con);
 
@@ -53,7 +64,7 @@ $gamesTotal = $gamesIncomplete + $gamesComplete;*/
   </head>
 
   <body>
-    <?php buildNavBar(); ?>
+    <?php buildNavBar(true,$userName); ?>
     <div class="container-fluid">
       <div class="row">
 		<?php buildSideBar("none"); ?>
@@ -63,7 +74,6 @@ $gamesTotal = $gamesIncomplete + $gamesComplete;*/
           <h2 class="sub-header">Distribution Methods</h2>
           <div class="table-responsive">
             <table class="table table-striped table-hover">
-
               <thead>
                 <tr>
 					<th width="20px">&nbsp;</th>
@@ -73,30 +83,47 @@ $gamesTotal = $gamesIncomplete + $gamesComplete;*/
               </thead>
               <tbody>
 
-			<?php
-				foreach ($distroIDs as $key => $value) {
-
-					echo "\t\t\t\t<tr>\r\n";
-
-					echo "\t\t\t\t\t<td>&nbsp;</td>\r\n";
-					echo "\t\t\t\t\t<td>" . $value . "</td>\r\n";
-					echo "\t\t\t\t\t<td>\r\n";
-					if ($value <> 'Other') {
-						echo "\t\t\t\t\t\t<form method='post' class='form-horizontal' role='form'>\r\n";
-						echo "\t\t\t\t\t\t<input type='hidden' id='DistroID' name='DistroID' value='" . $key . "'>\r\n";
-						echo "\t\t\t\t\t\t<button action=\"#\" id='RemoveDistro' name='RemoveDistro' type='submit' class='btn btn-primary'>Delete</button>\r\n";
-						echo "\t\t\t\t\t\t</form>\r\n";
+				<?php
+					foreach ($distroIDs as $key => $value) {
+						echo "\t\t\t\t<tr>\r\n";
+						echo "\t\t\t\t\t<td>&nbsp;</td>\r\n";
+						echo "\t\t\t\t\t<td>" . $value . "</td>\r\n";
+						echo "\t\t\t\t\t<td>\r\n";
+						if ($value <> 'Other') {
+							if ($userRole == 1) {
+								echo "\t\t\t\t\t\t<form method='post' class='form-horizontal' role='form'>\r\n";
+								echo "\t\t\t\t\t\t<input type='hidden' id='DistroID' name='DistroID' value='" . $key . "'>\r\n";
+								echo "\t\t\t\t\t\t<button action=\"#\" id='RemoveDistro' name='RemoveDistro' type='submit' class='btn btn-primary'>Delete</button>\r\n";
+								echo "\t\t\t\t\t\t</form>\r\n";
+							} else {
+								echo "\t\t\t\t\t\t<button type='button' class='btn btn-primary' disabled='disabled'>Delete</button>\r\n";
+							}
+						}
+						echo "\t\t\t\t\t</td>\r\n";
+						echo "\t\t\t\t</tr>\r\n";
 					}
-					echo "\t\t\t\t\t</td>\r\n";
-					echo "\t\t\t\t</tr>\r\n";
-				}
-			?>
+				?>
+              </tbody>
+            </table>
+          </div> <!-- End Distro Table div -->
+		  
+          <h2 class="sub-header">Systems</h2>
+          <div class="table-responsive">
+            <table class="table table-striped table-hover">
+              <thead>
+                <tr>
+					<th width="20px">&nbsp;</th>
+					<th>System Name</th>
+					<th>&nbsp;</th>
+                </tr>
+              </thead>
+              <tbody>
 
+<!-- PHP Code to output, add, remove Systems -->
 
               </tbody>
-
             </table>
-          </div>
+          </div> <!-- End System Table div -->
         </div>
       </div>
     </div>

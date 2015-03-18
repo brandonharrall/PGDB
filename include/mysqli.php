@@ -15,6 +15,21 @@
 /**         **/
 /** SELECTS **/
 /**         **/
+
+	function queryLogin($dbobj,$pUsername,$pPassword) {
+		$statement = $dbobj->prepare("SELECT UserID, Role, UserName, Password " . 
+			"FROM users " .
+			"WHERE Active=1 AND UserName=? AND Password=?;");
+		$statement->bind_param('ss',$pUsername,$pPassword);
+		$statement->execute();
+		$result = $statement->get_result();
+		$statement->close();
+		if($result->num_rows == 1) {
+			return $result;
+		} else {
+			return false;
+		}
+	}
 	
 	function queryDBAll($dbobj) {
 		$result = $dbobj->query("SELECT titl.TitleID, titl.Title, titl.Genre, titl.CoverArt " .

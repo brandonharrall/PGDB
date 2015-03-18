@@ -25,6 +25,10 @@ body {
   border: 0;
 }
 
+#logoutbutton {
+	padding-top:14px;
+}
+
 /*
  * Sidebar
  */

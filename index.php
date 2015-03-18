@@ -2,14 +2,16 @@
 
 	require_once "include/config.php";
 	require_once "include/functions.php";
-
 	session_start();
-	//$_SESSION['pwd'] = value;
-	//Unset: unset($_SESSION['pwd']);
-
-	//End session:
-	//$_SESSION = array();
-	//session_destroy();
+	//If the user has logged in, get their information
+	if (isset($_SESSION['user'])) {
+		$userName = $_SESSION['user'];
+		$userID = $_SESSION['UserID'];
+		$userRole = $_SESSION['Role'];
+	} else {
+		//User is not authed, kick out to login page
+		header('location: /pgdb/login.php');
+	}
 	
 	if (isset($_GET['list'])) {
 		 $ListType = $_GET['list'];
@@ -67,7 +69,7 @@
   </head>
 
   <body>
-	<?php buildNavBar(); ?>
+	<?php buildNavBar(true, $userName); ?>
     <div class="container-fluid">
       <div class="row">
 		<?php 
