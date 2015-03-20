@@ -3,7 +3,7 @@
 	require_once "include/config.php";
 	require_once "include/functions.php";
 	
-	$alert = "Please enter your username and password:";
+	$alert = "<p class='text-primary'>Please enter your username and password:</p>";
 	session_start();
 	//received logout request
 	if (isset($_POST['logout'])) {
@@ -14,7 +14,7 @@
 		//Otherwise, check if the user has been authenticated
 		if(isset($_SESSION['user'])) {
 			//Send to index if so
-			header('location: /pgdb/index.php');
+			header('location: index.php');
 		} else {
 			//If the user has not been authenticated
 			//But has made an attempt to login
@@ -26,7 +26,7 @@
 				$loginResult = queryLogin($con,$InputUser,$InputPW);
 				//If the database returns only one login
 				if ($loginResult === false) {
-					$alert = "Bad login";
+					$alert = "<p class='text-warning'>Invalid login or password</p>";
 				} else {
 					//Database returned one result, start a session and assign session variables
 					$loginResult = $loginResult->fetch_array();
@@ -34,7 +34,7 @@
 					$_SESSION['UserID'] = $loginResult['UserID'];
 					$_SESSION['Role'] = $loginResult['Role'];
 					//Take user to index
-					header('location: /pgdb/index.php');
+					header('location: index.php');
 				}
 			}
 		}

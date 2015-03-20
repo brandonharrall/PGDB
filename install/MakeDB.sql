@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS `distromethod` (
   `DRM` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Whether the method has Digital Rights Management',
   `ImagePath` varchar(120) DEFAULT NULL,
   PRIMARY KEY (`DistroID`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COMMENT='Stores details different distribution methods for video games.' AUTO_INCREMENT=9 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COMMENT='Stores details different distribution methods for video games.';
 
 -- --------------------------------------------------------
 
@@ -47,7 +47,7 @@ CREATE TABLE IF NOT EXISTS `system` (
   `Name` char(30) DEFAULT NULL,
   `Mfg` char(30) DEFAULT NULL,
   PRIMARY KEY (`ID`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=10 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -65,7 +65,7 @@ CREATE TABLE IF NOT EXISTS `titles` (
   `ReleaseDate` int(4) DEFAULT NULL COMMENT 'Year of Release',
   PRIMARY KEY (`TitleID`),
   KEY `SystemID` (`SystemID`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=279 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -86,7 +86,7 @@ CREATE TABLE IF NOT EXISTS `userentries` (
   PRIMARY KEY (`EntryID`),
   KEY `DistroID` (`DistroID`),
   KEY `TitleID` (`TitleID`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=268 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -99,10 +99,10 @@ CREATE TABLE IF NOT EXISTS `users` (
   `Role` int(11) NOT NULL,
   `UserName` varchar(30) NOT NULL,
   `Password` varchar(120) NOT NULL,
-  `Active` tinyint(1) NOT NULL DEFAULT '0',
+  `Active` tinyint(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`UserID`),
   UNIQUE KEY `UserName` (`UserName`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
 
 --
 -- Constraints for dumped tables

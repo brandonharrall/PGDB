@@ -11,7 +11,7 @@ require_once "include/functions.php";
 		$userRole = $_SESSION['Role'];
 	} else {
 		//User is not authed, kick out to login page
-		header('location: /pgdb/login.php');
+		header('location: login.php');
 	}
 
 if (isset($_GET['list'])) {
