@@ -17,7 +17,7 @@ require_once "include/functions.php";
 if (isset($_GET['list'])) {
 	$ListType = $_GET['list'];
 	if ($ListType == "archive") {
-		$queryResult = queryDBArchiveByUser($con, 1);
+		$queryResult = queryDBArchiveByUser($con, $userID);
 		$activeHeader = "Archived Games";
 		//Get the count of both complete and incomplete titles for archived games
 		$queryGamesIncomplete = queryCountTitles($con, True, False);
@@ -26,7 +26,7 @@ if (isset($_GET['list'])) {
 } else {
 	$ListType = "mygames";
 	$activeHeader = "Active Games";
-	$queryResult = queryDBActiveByUser($con, 1);
+	$queryResult = queryDBActiveByUser($con, $userID);
 	$queryCount = $queryResult->num_rows;
 	
 	//Get the count of both complete and incomplete titles for active games

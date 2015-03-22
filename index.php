@@ -19,26 +19,38 @@
 		$ListType = "";
 	}
 	
+	//Get default distro method for user inserts
+	$queryResultDistroMethods = queryDistroMethods($con);
+	$distroIDs = array();
+	while($row = $queryResultDistroMethods->fetch_array()) {
+		if ($row['Name'] == "Other") {
+			$defaultDistro = $row['DistroID'];
+		}
+	}
+	$queryResultDistroMethods->free();
+	echo $defaultDistro;
+
 	error_reporting(E_ALL ^ E_NOTICE);
 	if (isset($_POST['InputTitle'])) {
 		$InsertTitle = $_POST['InputTitle'];
 		$InsertGenre = $_POST['InputGenre'];
 		$InsertYear = $_POST['InputYear'];
 		$InsertSystem = $_POST['InputSystem'];
-		insertTitle($con, $InsertSystem, $InsertTitle, $InsertGenre, "1", $InsertYear);
+		insertTitle($con, $InsertSystem, $InsertTitle, $InsertGenre, $userID, $InsertYear);
 	}
 
 	if (isset($_POST['AddGameToUser'])) {
 		$AddInsertTitle = $_POST['TitleID'];
 		$AddInsertUserID = $_POST['UserID'];
-		insertTitleForUser($con, $AddInsertTitle, $AddInsertUserID);
+		insertTitleForUser($con, $AddInsertTitle, $AddInsertUserID, $defaultDistro);
 	}
 
-	//$queryResult = queryDBAllByUser($con, 1);
 	$queryResult = queryDBAll($con);
 	$queryCount = $queryResult->num_rows;
 
 	$querySystems = queryDBSystems($con);
+
+
 
 	$b = [];
 	while($row = mysqli_fetch_array($querySystems)) {
@@ -85,10 +97,8 @@
 		?>
           <div class="row placeholders">
             <div class="col-xs-6 col-sm-6 placeholder">
-			  <div id="chartContainer" style="height: 300px; width: 100%;"></div>
             </div>
             <div class="col-xs-6 col-sm-6 placeholder">
-				<div id="chartContainer2" style="height: 300px; width: 100%;"></div>
             </div>
           </div>
 <!-- Wrap this with PHP to disable if not admin role -->
@@ -122,6 +132,7 @@
             <table class="table table-striped">
               <thead>
                 <tr>
+                  <th>Cover</th>
                   <th>Title</th>
                   <th>Genre</th>
                   <th>Add</th>
@@ -133,7 +144,7 @@
 				$numMissing = 0;
 				while($row = $queryResult->fetch_array()) {
 					if ($ListType == "missing") {
-						if (queryDBDoesUserHaveTitle($con,$row['TitleID'], 1) == "false") {
+						if (queryDBDoesUserHaveTitle($con,$row['TitleID'], $userID) == "false") {
 							echo "\t\t\t\t<tr>\r\n";
 							if ($row['CoverArt'] == "") {
 								echo "\t\t\t\t\t<td></td>\r\n";
@@ -148,7 +159,7 @@
 							}
 
 								$numMissing++;
-								createButtonAddGameToUser($row['TitleID'], 1, $ListType);
+								createButtonAddGameToUser($row['TitleID'], $userID, $ListType);
 								
 							echo "\t\t\t\t\t</td>\r\n";
 							echo "\t\t\t\t</tr>\r\n";
@@ -166,9 +177,9 @@
 							if (!$row['Genre'] == "") {
 								$a[$row['Genre']]++;
 							}
-							if (queryDBDoesUserHaveTitle($con,$row['TitleID'], 1) == "false") {
+							if (queryDBDoesUserHaveTitle($con,$row['TitleID'], $userID) == "false") {
 									$numMissing++;
-									createButtonAddGameToUser($row['TitleID'], 1, $ListType);
+									createButtonAddGameToUser($row['TitleID'], $userID, $ListType);
 							}
 							echo "\t\t\t\t\t</td>\r\n";
 							echo "\t\t\t\t</tr>\r\n";

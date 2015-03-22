@@ -132,11 +132,11 @@
 		$statement->close();
 	}
 
-	function insertTitleForUser($dbobj,$pTitleID,$pUserID) {
+	function insertTitleForUser($dbobj,$pTitleID,$pUserID,$pDistroID) {
 		//TO DO: allow progress, wanted, and acquired
-		$statement = $dbobj->prepare("INSERT INTO `games`.`userentries` (`TitleID`, `UserID`, `Progress`, `Wanted`, `Acquired`) " .
-			"VALUES (?, ?, '0', '0', '1');");
-		$statement->bind_param('ii',$pTitleID,$pUserID);
+		$statement = $dbobj->prepare("INSERT INTO `games`.`userentries` (`TitleID`, `UserID`,`DistroID`, `Progress`, `Wanted`, `Acquired`) " .
+			"VALUES (?, ?, ?, '0', '0', '1');");
+		$statement->bind_param('iii',$pTitleID,$pUserID,$pDistroID);
 		$statement->execute();
 		$statement->close();
 	}
