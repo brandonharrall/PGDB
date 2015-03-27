@@ -2,7 +2,12 @@
 
 	require_once "include/config.php";
 	require_once "include/functions.php";
+
+/*********************/
+/** BEGIN - SESSION **/
+
 	session_start();
+
 	//If the user has logged in, get their information
 	if (isset($_SESSION['user'])) {
 		$userName = $_SESSION['user'];
@@ -12,49 +17,58 @@
 		//User is not authed, kick out to login page
 		header('location: login.php');
 	}
+
+/** END - SESSION   **/
+/*********************/
 	
-	if (isset($_GET['list'])) {
+	if (isset($_GET['list'])) {																	//Get the list type, used to filter results
 		 $ListType = $_GET['list'];
 	} else {
 		$ListType = "";
 	}
 	
 	//Get default distro method for user inserts
+	//NOTE: Must be called before adding game to user, contains required information
 	$queryResultDistroMethods = queryDistroMethods($con);
-	$distroIDs = array();
+	//$distroIDs = array();																		//We'll eventually store this for use later
 	while($row = $queryResultDistroMethods->fetch_array()) {
 		if ($row['Name'] == "Other") {
 			$defaultDistro = $row['DistroID'];
 		}
 	}
 	$queryResultDistroMethods->free();
-	echo $defaultDistro;
 
-	error_reporting(E_ALL ^ E_NOTICE);
-	if (isset($_POST['InputTitle'])) {
-		$InsertTitle = $_POST['InputTitle'];
+/*******************/
+/** BEGIN - POSTS **/
+
+	if (isset($_POST['InputTitle'])) {															//If the current user is adding a title
+		$InsertTitle = $_POST['InputTitle'];													//Get title information
 		$InsertGenre = $_POST['InputGenre'];
 		$InsertYear = $_POST['InputYear'];
 		$InsertSystem = $_POST['InputSystem'];
-		insertTitle($con, $InsertSystem, $InsertTitle, $InsertGenre, $userID, $InsertYear);
+
+		insertTitle($con, $InsertSystem, $InsertTitle, $InsertGenre, $userID, $InsertYear);		//Call insert query
 	}
 
-	if (isset($_POST['AddGameToUser'])) {
-		$AddInsertTitle = $_POST['TitleID'];
+	if (isset($_POST['AddGameToUser'])) {														//If the current user is adding a game to their list
+		$AddInsertTitle = $_POST['TitleID'];													//Get the title and user
 		$AddInsertUserID = $_POST['UserID'];
-		insertTitleForUser($con, $AddInsertTitle, $AddInsertUserID, $defaultDistro);
+
+		insertTitleForUser($con, $AddInsertTitle, $AddInsertUserID, $defaultDistro);			//Call Insert query
 	}
 
-	$queryResult = queryDBAll($con);
-	$queryCount = $queryResult->num_rows;
+/** END - POSTS   **/
+/*******************/
+
+
+	$resAllTitles = queryAllTitles($con);
+	$queryCount = $resAllTitles->num_rows;
+
 
 	$querySystems = queryDBSystems($con);
-
-
-
-	$b = [];
-	while($row = mysqli_fetch_array($querySystems)) {
-		$b[$row['Name']] = $row['ID'];
+	$systemsArray = [];
+	while($row = $querySystems->fetch_array()) {
+		$systemsArray[$row['Name']] = $row['ID'];
 	}
 
 ?>
@@ -76,7 +90,6 @@
 
     <!-- Custom styles for this template -->
     <link href="css/dashboard.css" rel="stylesheet">
-	<!--<link href="../../common/css/custom.css" rel="stylesheet">-->
 
   </head>
 
@@ -87,16 +100,18 @@
 		<?php 
 			if ($ListType == "missing") {
 				buildSideBar("missing");
-				echo "\t\t<div class=\"col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main\">\r\n";
-				echo "\t\t<h1 class=\"page-header\">Missing Titles</h1>\r\n";
+				echo "\t\t<div class='col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main'>\r\n";
+				echo "\t\t<h1 class='page-header'>Missing Titles</h1>\r\n";
 			} else {
 				buildSideBar("main");
-				echo "\t\t<div class=\"col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main\">\r\n";
-				echo "\t\t<h1 class=\"page-header\">All Games</h1>\r\n";
+				echo "\t\t<div class='col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main'>\r\n";
+				echo "\t\t<h1 class='page-header'>All Games</h1>\r\n";
 			}
 		?>
           <div class="row placeholders">
             <div class="col-xs-6 col-sm-6 placeholder">
+            	<h1><?=$queryCount?></h1>
+            	games in this database
             </div>
             <div class="col-xs-6 col-sm-6 placeholder">
             </div>
@@ -116,10 +131,10 @@
 				<input type="text" class="form-control" name="InputYear" id="InputYear" placeholder="2014">
 			  </div>
 				<?php
-					echo "\t\t\t<div class=\"form-group\">\r\n";
-					echo "\t\t\t\t<select name=\"InputSystem\" id=\"InputSystem\" class=\"form-control\">\r\n";
-					foreach($b as $w => $test){
-						echo "\t\t\t\t\t<option value=\"" . $test . "\">" . $w . "</option>\r\n";
+					echo "\t\t\t<div class='form-group'>\r\n";
+					echo "\t\t\t\t<select name='InputSystem' id='InputSystem' class='form-control'>\r\n";
+					foreach($systemsArray as $systemsName => $systemsID){
+						echo "\t\t\t\t\t<option value='$systemsID'>$systemsName</option>\r\n";
 					}
 					echo "\t\t\t\t</select>\r\n";
 					echo "\t\t\t</div>\r\n";
@@ -140,9 +155,9 @@
               </thead>
               <tbody>
 <?php	
-				$a = [];
+
 				$numMissing = 0;
-				while($row = $queryResult->fetch_array()) {
+				while($row = $resAllTitles->fetch_array()) {
 					if ($ListType == "missing") {
 						if (queryDBDoesUserHaveTitle($con,$row['TitleID'], $userID) == "false") {
 							echo "\t\t\t\t<tr>\r\n";
@@ -151,12 +166,9 @@
 							} else {
 								echo "\t\t\t\t\t<td><button onclick=\"UpdateImage('" . $row['CoverArt'] . "')\" type=\"button\" class=\"btn btn-sm btn-info\" data-toggle=\"popover\" title=\"Cover\">Cover</button></td>\r\n";
 							}
-							echo "\t\t\t\t\t<td><span data-toggle=\"tooltip\" title=\"Default tooltip\">" . $row['Title'] . "</span></td>\r\n";
+							echo "\t\t\t\t\t<td>" . $row['Title'] . "</td>\r\n";
 							echo "\t\t\t\t\t<td>" . $row['Genre'] . "</td>\r\n";
 							echo "\t\t\t\t\t<td>\r\n";
-							if (!$row['Genre'] == "") {
-								$a[$row['Genre']]++;
-							}
 
 								$numMissing++;
 								createButtonAddGameToUser($row['TitleID'], $userID, $ListType);
@@ -171,12 +183,10 @@
 							} else {
 								echo "\t\t\t\t\t<td><button onclick=\"UpdateImage('" . $row['CoverArt'] . "')\" type=\"button\" class=\"btn btn-sm btn-info\" data-toggle=\"popover\" title=\"Cover\">Cover</button></td>\r\n";
 							}
-							echo "\t\t\t\t\t<td><span data-toggle=\"tooltip\" title=\"Default tooltip\">" . $row['Title'] . "</span></td>\r\n";
+							echo "\t\t\t\t\t<td>" . $row['Title'] . "</td>\r\n";
 							echo "\t\t\t\t\t<td>" . $row['Genre'] . "</td>\r\n";
 							echo "\t\t\t\t\t<td>\r\n";
-							if (!$row['Genre'] == "") {
-								$a[$row['Genre']]++;
-							}
+
 							if (queryDBDoesUserHaveTitle($con,$row['TitleID'], $userID) == "false") {
 									$numMissing++;
 									createButtonAddGameToUser($row['TitleID'], $userID, $ListType);
@@ -199,19 +209,8 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script src="js/bootstrap.js"></script>
     <script src="js/docs.min.js"></script>
+    <script src="js/sitescripts.js"></script>
 	
-	<script type="text/javascript">
-
-		var CoverImage = "";
-		function UpdateImage(pImage) {
-			$("[data-toggle=popover]").popover({placement: 'bottom', trigger: 'hover', content: "<img src=\"image/coverart/" + pImage + "\">", html: true});
-			$("[data-toggle=popover]").popover('toggle')
-		}
-		$("[data-toggle=tooltip]").tooltip();
-
-		//$("[data-toggle=popover]").popover({placement: 'bottom', content: CoverImage, html: true});
-
-	</script>
 	<?php
 		$con->close();
 	?>

@@ -1,12 +1,10 @@
 <?php
 	
 	function tabs($pCount) {
-		$strTabs = "";
-		for ($i = 0; $i < $pCount; $i++) {
-			$strTabs = $strTabs . "\t";
-		}
+		$strTabs = str_repeat("\t",$pCount);
 		return $strTabs;
 	}
+	
 	function createButtonAddGameToUser($pTitleID,$pUserID,$pList) {
 		echo "\t\t\t\t\t\t<form method=\"post\">\r\n";
 		echo "\t\t\t\t\t\t\t<input type=\"hidden\" id=\"AddGameToUser\" name=\"AddGameToUser\" value=\"1\">\r\n";
@@ -45,10 +43,10 @@
 			echo "\t\t\t\t<ul class=\"nav navbar-nav navbar-right\">\r\n";
 			echo "\t\t\t\t\t<li><a href=\"settings.php\">Settings</a></li>\r\n";
 			echo "\t\t\t\t\t<li><a href=\"#\">$pUserName</a></li>\r\n";
-			echo "<li><form method='post' class='form-inline' role='form' action='login.php'>\r\n";
-			echo "<input type='hidden' class='form-control' name='logout' id='logout' value=''>\r\n";
-			echo "<button id='logoutbutton' type='submit' class='btn btn-link'>Log Out</button>\r\n";
-			echo "</form></li>\r\n";
+			echo "\t\t\t\t\t<li><form method='post' class='form-inline' role='form' action='login.php'>\r\n";
+			echo "\t\t\t\t\t<input type='hidden' class='form-control' name='logout' id='logout' value=''>\r\n";
+			echo "\t\t\t\t\t<button id='logoutbutton' type='submit' class='btn btn-link'>Log Out</button>\r\n";
+			echo "\t\t\t\t\t</form></li>\r\n";
 			echo "\t\t\t\t</ul>\r\n";
 			echo "\t\t\t\t<form class=\"navbar-form navbar-right\">\r\n";
 			echo "\t\t\t\t\t<input type=\"text\" class=\"form-control\" placeholder=\"Search...\">\r\n";
@@ -105,6 +103,17 @@
         echo "\t\t\t</ul>\r\n";
         echo "\t\t</div>\r\n";
 	
+	}
+
+	function checkPassword($pPassword1,$pPassword2) {
+		if($pPassword1<>$pPassword2) {
+			return "<p class='text-warning'>Passwords do not match!</p>";
+//Uncomment and expand this section to enforce password length/complexity
+//		} else if (strlen($pPassword1) < 8) {
+//			return "<p class='text-warning'>Password should be 8 or more characters in length!</p>";
+		} else {
+			return "valid";
+		}
 	}
 
 ?>

@@ -36,3 +36,11 @@ function UpdateModal(pEntryID,pTitle,pProgress,pWanted,pAcquired,pPriority,pRati
 	eleDistro.value = pDistro;
 	eleTitle.innerHTML = pTitle;
 }
+
+
+function UpdateImage(pImage) {
+	$("[data-toggle=popover]").popover({placement: 'bottom', trigger: 'hover', content: "<img src=\"image/coverart/" + pImage + "\">", html: true});
+	$("[data-toggle=popover]").popover('toggle')
+}
+
+

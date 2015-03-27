@@ -1,11 +1,10 @@
--- phpMyAdmin SQL Dump
--- version 4.1.14
--- http://www.phpmyadmin.net
+-- PGDB
+-- Author: Brandon harrall
+-- https://github.com/brandonharrall/PGDB
 --
--- Host: 127.0.0.1
--- Generation Time: Mar 10, 2015 at 03:14 AM
--- Server version: 5.6.17
--- PHP Version: 5.5.12
+-- MakeDB.sql
+-- Run only upon first installation, for updates please login as admin (role=1) and visit the settings page.
+
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -96,13 +95,44 @@ CREATE TABLE IF NOT EXISTS `userentries` (
 
 CREATE TABLE IF NOT EXISTS `users` (
   `UserID` int(11) NOT NULL AUTO_INCREMENT,
-  `Role` int(11) NOT NULL,
+  `Role` int(11) NOT NULL DEFAULT '2',
   `UserName` varchar(30) NOT NULL,
-  `Password` varchar(120) NOT NULL,
+  `Password` varchar(256) NOT NULL,
+  `Salt` varchar(120) NOT NULL,
   `Active` tinyint(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`UserID`),
   UNIQUE KEY `UserName` (`UserName`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `globals`
+--
+
+CREATE TABLE IF NOT EXISTS `globals` (
+  `NAME` varchar(30) NOT NULL,
+  `VALUE` tinytext NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
+-- Insert required global variables
+--
+
+INSERT INTO `globals` (`NAME`, `VALUE`) VALUES('SCHEMA_VERSION', '1');
+INSERT INTO `globals` (`NAME`, `VALUE`) VALUES('REQUIRE_LOGIN', '1');
+INSERT INTO `globals` (`NAME`, `VALUE`) VALUES('ALLOW_REGISTRATION', '1');
+INSERT INTO `globals` (`NAME`, `VALUE`) VALUES('MINROLE_ADDTITLE', '1');
+
+--
+-- Insert required entries
+--
+INSERT INTO `distromethod`(`Name`, `DRM`) VALUES ('Other',0);
+INSERT INTO `system` (`Name`, `Mfg`) VALUES('PC', NULL);
+
+-- --------------------------------------------------------
 
 --
 -- Constraints for dumped tables
@@ -121,12 +151,7 @@ ALTER TABLE `userentries`
   ADD CONSTRAINT `userentries_ibfk_1` FOREIGN KEY (`TitleID`) REFERENCES `titles` (`TitleID`) ON DELETE NO ACTION,
   ADD CONSTRAINT `userentries_ibfk_2` FOREIGN KEY (`DistroID`) REFERENCES `distromethod` (`DistroID`) ON DELETE NO ACTION;
 
---
--- Insert required entries
---
-INSERT INTO `distromethod`(`Name`, `DRM`) VALUES ('Other',0)
-INSERT INTO `users`(`Role`,`UserName`,`Password`,`Active`) VALUES (1,'YourUser','unusedpw',1)
-INSERT INTO `system`(`Name`,`Mfg`) VALUES ('PC','None')
+
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

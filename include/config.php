@@ -1,8 +1,6 @@
 <?php
 
-	// *******************************************
-	// *** Database configuration (important!) ***
-	// *******************************************
+	// PGDB Database configuration
 
 	define('DB_TYPE', 'mysql');
 	define('DB_HOST', '');
@@ -15,6 +13,7 @@
 	
 	$con = connect(DB_HOST,DB_USER,DB_PASS,DB_NAME);
 	
-	
+	define('CURDBVERS', '1');
+	define('CURVERS', '0.1');
 
 ?> 

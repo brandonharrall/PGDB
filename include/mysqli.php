@@ -4,7 +4,7 @@
 	function connect($host, $user, $pass, $db) {
 
 		$link = new mysqli($host, $user, $pass, $db);
-		if (mysqli_connect_errno($link)) {
+		if ($link->connect_errno) {
 			echo "Failed to connect to MySQL: " . mysqli_connect_error();
 		} else {
 			return $link;
@@ -16,41 +16,60 @@
 /** SELECTS **/
 /**         **/
 
+	//Returns result of passed username/password or false if no results
 	function queryLogin($dbobj,$pUsername,$pPassword) {
-		$statement = $dbobj->prepare("SELECT UserID, Role, UserName, Password " . 
+		$statement1 = $dbobj->prepare("SELECT Salt " . 
+			"FROM users " .
+			"WHERE UserName=?;"); 
+		$statement1->bind_param('s',$pUsername);
+		$statement1->execute();
+		$saltandpass = $statement1->get_result();
+		$statement1->close();
+
+		$saltandpass = $saltandpass->fetch_array();
+		$salt = $saltandpass['Salt'];
+		$saltedpass = hash("sha256",$salt . $pPassword);
+
+		$statement2 = $dbobj->prepare("SELECT UserID, Role, UserName, Password " . 
 			"FROM users " .
 			"WHERE Active=1 AND UserName=? AND Password=?;");
-		$statement->bind_param('ss',$pUsername,$pPassword);
-		$statement->execute();
-		$result = $statement->get_result();
-		$statement->close();
+		$statement2->bind_param('ss',$pUsername,$saltedpass);
+		$statement2->execute();
+		$result = $statement2->get_result();
+		$statement2->close();
 		if($result->num_rows == 1) {
 			return $result;
 		} else {
 			return false;
 		}
 	}
+
+	function queryForUser($dbobj,$pUserName) {
+		$statement = $dbobj->prepare("SELECT COUNT(ID) " . 
+			"FROM users " .
+			"WHERE Active=1 AND UserName=?;");
+		$statement->bind_param('s',$pUsername);
+		$statement->execute();
+		$result = $statement->get_result();
+		$statement->close();
+		if($result->num_rows == 1) {
+			return false;
+		} else {
+			return true;
+		}
+	}
 	
-	function queryDBAll($dbobj) {
+	//Returns result of all active titles
+	function queryAllTitles($dbobj) {
 		$result = $dbobj->query("SELECT titl.TitleID, titl.Title, titl.Genre, titl.CoverArt " .
 			"FROM titles AS titl " . 
 			"WHERE titl.Active = 1 " .
 			"ORDER BY titl.Title ASC");
-		/*$dbArray = array();
-		while($row = $result->fetch_array()) {
-			$dbArray["ID"] = 	$row['TitleID'];
-			$dbArray["Title"] = $row['Title'];
-			$dbArray["Genre"] = $row['Genre'];
-			$dbArray["Cover"] = $row['CoverArt'];
-		}
-			var_dump($dbArray[113]);
-		
-		$result->free();*/
+
 		return $result;
-		//return $dbArray;
 	}
 	
-	//Returns all systems - Name, ID
+	//Returns result of all systems
 	function queryDBSystems($dbobj) {
 		$result = $dbobj->query("SELECT sys.Name, sys.ID " .
 			"FROM system AS sys " . 
@@ -98,11 +117,14 @@
 		}
 	}
 	
+	//Returns result of all distribution methods
 	function queryDistroMethods($dbobj) {
 		$result = $dbobj->query("SELECT DistroID, Name FROM distromethod");
 		return $result;
 	}
 	
+	//Returns result of a count of titles
+//*** Should get the first row of the result and return only the count, no need to return result set.
 	function queryCountTitles($dbobj, $archived, $complete) {
 		if ($archived) {
 			if ($complete) {
@@ -118,6 +140,21 @@
 			}
 		}
 		return $result;
+	}
+
+	//Returns array of global variables
+	function queryGlobals($dbobj) {
+		$result = $dbobj->query("SELECT `NAME`,`VALUE` FROM games.globals;");
+		//If last DB result was 'table doesn't exist' (no globals table)
+		if ($dbobj->errno == 1146) {
+			return false;
+		} else {
+			$dbvers = [];
+			while($row = $result->fetch_array()) {
+				$dbvers[$row['NAME']] = $row['VALUE'];
+			}
+			return $dbvers;
+		}
 	}
 
 /**         **/	
@@ -141,6 +178,17 @@
 		$statement->close();
 	}
 	
+	function insertNewUser($dbobj,$pUserName,$pSalt,$pSaltedPass) {
+		$statement = $dbobj->prepare("INSERT INTO `games`.`users` (`UserName`, `Password`,`Salt`) " .
+			"VALUES (?, ?, ?);");
+		$statement->bind_param('sss',$pUserName,$pSaltedPass,$pSalt);
+		$statement->execute();
+		$statement->close();
+	}
+
+/**         **/
+/** UPDATES **/
+/**         **/
 	function updateEntryForUser($dbobj,$pEntryID,$pProgress,$pWanted,$pAcquired,$pPriority,$pRating,$pDistro) {
 		$statement = $dbobj->prepare("UPDATE games.userentries SET Progress=?, Wanted=?, Acquired=?" . 
 			", Priority=?, Rating=?, DistroID=?" . 
@@ -149,7 +197,15 @@
 		$statement->execute();
 		$statement->close();
 	}
-	
+
+	//Given a global variable, update it's value
+	function updateGlobal($dbobj,$pGlobalName,$pGlobalValue) {
+		$statement = $dbobj->prepare("UPDATE games.globals SET VALUE=?" .
+			" WHERE NAME=?;");
+		$statement->bind_param('ss',$pGlobalValue,$pGlobalName);
+		$statement->execute();
+		$statement->close();
+	}
 	
 /**         **/
 /** DELETES **/
@@ -169,6 +225,5 @@
 		$deletestmt->execute();
 		$deletestmt->close();
 	}
-	
 	
 ?>
