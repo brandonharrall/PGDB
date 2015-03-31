@@ -2,7 +2,7 @@
 
 	require_once "include/config.php";
 	require_once "include/functions.php";
-	
+
 	$dbGlobals = queryGlobals($con);
 	if ($dbGlobals !== false) {
 		$dbAllowReg = $dbGlobals['ALLOW_REGISTRATION'];
@@ -10,7 +10,7 @@
 		$dbAllowReg = false;
 	}
 
-	$alert = "<p class='text-primary'>Please enter your username and password:</p>";
+	$alert = "";
 	session_start();
 	//received logout request
 	if (isset($_POST['logout'])) {
@@ -18,6 +18,7 @@
 		$_SESSION = array();
 		session_destroy();
 	} 
+
 
 	//Check if the user has been authenticated
 	if(isset($_SESSION['user'])) {
@@ -31,9 +32,8 @@
 			$NewUserName = $_POST['CreateUser'];
 			$NewUserPW = $_POST['CreatePassword1'];
 			$NewUserPWChk = $_POST['CreatePassword2'];
-			$alert = checkPassword($NewUserPW, $NewUserPWChk);
 			//If there is no issue with the password complexity
-			if ($alert == "valid") {
+			if($NewUserPW==$NewUserPWChk) {
 				//if (!queryForUser($NewUserName) {
 					//Unused username
 					$salt = hash("md5",rand(1000000,9999999));
@@ -42,6 +42,8 @@
 					//If everything returned okay (add verification)
 					$alert = "<p class='text-primary'>New user created!</p>";
 				//}
+			} else {
+				$alert = "<p class='text-warning'>Your passwords did not match or did not meet complexity requirements!</p>";
 			}
 			
 		}
@@ -96,43 +98,67 @@
     <div class="container-fluid">
       <div class="row">
 		<?php buildSideBar("login");?>
-			<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-			<h1 class="page-header">Log In</h1>
-			<?=$alert?>
-			<form method="post" class="form-inline" role="form">
-			  <div class="form-group">
-				<label class="sr-only" for="InputUser">Username</label>
-				<input type="text" autofocus class="form-control" name="InputUser" id="InputUser" placeholder="Username">
-			  </div>
-			  <div class="form-group">
-				<label class="sr-only" for="InputPassword">Password</label>
-				<input type="password" class="form-control" name="InputPassword" id="InputPassword">
-			  </div>
-			  <button type="submit" class="btn btn-default" action="#">Log In</button>
-			</form>
-
-			<?php
-				if ($dbAllowReg==1) {
-					echo "or create a new account\r\n";
-					echo "<form method='post' class='form-inline' role='form'>\r\n";
-					  echo "<div class='form-group'>\r\n";
-						echo "<label class='sr-only' for='CreateUser'>Username</label>\r\n";
-						echo "<input type='text' autofocus class='form-control' name='CreateUser' id='CreateUser' placeholder='Username'>\r\n";
-					  echo "</div>\r\n";
-					  echo "<div class='form-group'>\r\n";
-						echo "<label class='sr-only' for='CreatePassword1'>Password</label>\r\n";
-						echo "<input type='password' class='form-control' name='CreatePassword1' id='CreatePassword1'>\r\n";
-					  echo "</div>\r\n";
-					  echo "<div class='form-group'>\r\n";
-						echo "<label class='sr-only' for='CreatePassword2'>Password</label>\r\n";
-						echo "<input type='password' class='form-control' name='CreatePassword2' id='CreatePassword2'>\r\n";
-					  echo "</div>\r\n";
-					  echo "<button type='submit' class='btn btn-default' action='#''>Create User</button>\r\n";
-					echo "</form>\r\n";
-				}
-			?>
-
-
+			<div class="col-sm-9 col-sm-offset-3 col-md-4 col-md-offset-2 main">
+				<h1 class="page-header">Log In</h1>
+				<?=$alert?>
+				<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+				  <div class="panel panel-default">
+				    <div class="panel-heading" role="tab" id="headingOne">
+				      <h4 class="panel-title">
+				        <a data-toggle="collapse" data-parent="#accordion" href="#collapseExisting" aria-expanded="true" aria-controls="collapseExisting">
+				          Existing User
+				        </a>
+				      </h4>
+				    </div>
+				    <div id="collapseExisting" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+				      <div class="panel-body">
+						<form method="post" class="form-group" role="form">
+						  <div class="form-group">
+							<label for="InputUser">Username</label>
+							<input type="text" autofocus class="form-control" name="InputUser" id="InputUser" placeholder="Username">
+						  </div>
+						  <div class="form-group">
+							<label for="InputPassword">Password</label>
+							<input type="password" class="form-control" name="InputPassword" id="InputPassword">
+						  </div>
+						  <button type="submit" class="btn btn-primary" action="#">Log In</button>
+						</form>
+				      </div>
+				    </div>
+				  </div>
+				  <div class="panel panel-default">
+				    <div class="panel-heading" role="tab" id="headingTwo">
+				      <h4 class="panel-title">
+				        <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseNew" aria-expanded="false" aria-controls="collapseNew">
+				          Create New Account
+				        </a>
+				      </h4>
+				    </div>
+				    <div id="collapseNew" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+				      <div class="panel-body">
+						<?php if ($dbAllowReg==1): ?>
+								<form method="post" class="form-group" role="form">
+								  <div class="form-group">
+									<label for="CreateUser">Username</label>
+									<input type="text" autofocus class="form-control" name="CreateUser" id="CreateUser" placeholder="Username">
+								  </div>
+								  <div class="form-group">
+									<label for="CreatePassword1">Password</label>
+									<input type="password" class="form-control" name="CreatePassword1" id="CreatePassword1" placeholder="Password">
+								  </div>
+								  <div class="form-group">
+									<label for="CreatePassword2">Re-Type Password</label>
+									<input type="password" class="form-control" name="CreatePassword2" id="CreatePassword2" placeholder="Confirm">
+								  </div>
+								  <button type="submit" class="btn btn-primary" action="#">Create User</button>
+								</form>
+						<?php else: ?>
+							<p class="text-primary">The Admin has disabled user registration.</p>
+						<?php endif; ?>
+				      </div>
+				    </div>
+				  </div>
+				</div>
           </div>
         </div>
       </div>

@@ -130,16 +130,16 @@
 				<label class="sr-only" for="InputYear">Year</label>
 				<input type="text" class="form-control" name="InputYear" id="InputYear" placeholder="2014">
 			  </div>
+			  <div class="form-group">
+			    <select name="InputSystem" id="InputSystem" class="form-control">
 				<?php
-					echo "\t\t\t<div class='form-group'>\r\n";
-					echo "\t\t\t\t<select name='InputSystem' id='InputSystem' class='form-control'>\r\n";
 					foreach($systemsArray as $systemsName => $systemsID){
 						echo "\t\t\t\t\t<option value='$systemsID'>$systemsName</option>\r\n";
 					}
-					echo "\t\t\t\t</select>\r\n";
-					echo "\t\t\t</div>\r\n";
 				?>
-			  <button type="submit" class="btn btn-default" action="#">Add</button>
+				</select>
+			   </div>
+			  <button type="submit" class="btn btn-success" action="#">Add</button>
 			</form>
 <!-- Wrap this with PHP to disable if not admin role -->		  
           <h2 class="sub-header"></h2>
