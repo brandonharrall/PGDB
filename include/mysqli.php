@@ -122,6 +122,11 @@
 		$result = $dbobj->query("SELECT DistroID, Name FROM distromethod");
 		return $result;
 	}
+
+	function querySystems($dbobj) {
+		$result = $dbobj->query("SELECT ID, Name, Mfg FROM system");
+		return $result;
+	}
 	
 	//Returns result of a count of titles
 //*** Should get the first row of the result and return only the count, no need to return result set.
@@ -182,6 +187,22 @@
 		$statement = $dbobj->prepare("INSERT INTO `games`.`users` (`UserName`, `Password`,`Salt`) " .
 			"VALUES (?, ?, ?);");
 		$statement->bind_param('sss',$pUserName,$pSaltedPass,$pSalt);
+		$statement->execute();
+		$statement->close();
+	}
+
+	function insertDistroMethod($dbobj,$pDistroName) {
+		$statement = $dbobj->prepare("INSERT INTO `games`.`distromethod` (`Name`) " .
+			"VALUES (?);");
+		$statement->bind_param('s',$pDistroName);
+		$statement->execute();
+		$statement->close();
+	}
+
+	function insertSystem($dbobj,$pSystemName,$pSystemMfg) {
+		$statement = $dbobj->prepare("INSERT INTO `games`.`system` (`Name`,`Mfg`) " .
+			"VALUES (?, ?);");
+		$statement->bind_param('ss',$pSystemName,$pSystemMfg);
 		$statement->execute();
 		$statement->close();
 	}

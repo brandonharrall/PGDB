@@ -52,6 +52,18 @@
 		$distroArray[$row['DistroID']] = $row['Name'];
 	}
 
+	//Get a recordset of distribution methods for use in the update modal later
+	$queryResultSystems = querySystems($con);
+
+	$systemArray = array();
+	while($row = $queryResultSystems->fetch_array()) {
+		if ($row['Name'] == "PC") {
+			$defaultSystem = $row['ID'];
+		}
+		$systemArray[$row['ID']] = $row['Name'];
+	}
+
+
 
 /*******************/
 /** BEGIN - POSTS **/
@@ -62,6 +74,25 @@
 
 		//Call the Update SQL transaction with passed data
 		deleteDistroMethod($con, $DistroID, $defaultDistro);
+	}
+
+	if (isset($_POST['InputDistro'])) {														//
+		$DistroName = $_POST['InputDistro'];
+
+		//Call the Update SQL transaction with passed data
+		insertDistroMethod($con, $DistroName);
+	}
+
+	if (isset($_POST['InputSystem'])) {														//
+		$SystemName = $_POST['InputSystem'];
+		if (isset($_POST['InputMfg'])) {
+			$MfgName = $_POST['InputMfg'];
+		} else {
+			$MfgName = "";
+		}
+
+		//Call the Update SQL transaction with passed data
+		insertSystem($con, $SystemName, $MfgName);
 	}
 
 	if (isset($_POST['UpdateAllowReg'])) {
@@ -173,15 +204,15 @@
               <tbody>
 
 				<?php
-					foreach ($distroArray as $distroName => $distroID) {
+					foreach ($distroArray as $distroID => $distroName) {
 						echo "\t\t\t\t<tr>\r\n";
 						echo "\t\t\t\t\t<td>&nbsp;</td>\r\n";
-						echo "\t\t\t\t\t<td>" . $distroID . "</td>\r\n";
+						echo "\t\t\t\t\t<td>" . $distroName . "</td>\r\n";
 						echo "\t\t\t\t\t<td>\r\n";
 						if ($userRole == 1) {
-							if ($distroID <> 'Other') {
+							if ($distroName <> 'Other') {
 								echo "\t\t\t\t\t\t<form method='post' class='form-horizontal' role='form'>\r\n";
-								echo "\t\t\t\t\t\t<input type='hidden' id='DistroID' name='DistroID' value='" . $distroName . "'>\r\n";
+								echo "\t\t\t\t\t\t<input type='hidden' id='DistroID' name='DistroID' value='" . $distroID . "'>\r\n";
 								echo "\t\t\t\t\t\t<button action=\"#\" id='RemoveDistro' name='RemoveDistro' type='submit' class='btn btn-primary'>Delete</button>\r\n";
 								echo "\t\t\t\t\t\t</form>\r\n";
 							}
@@ -190,6 +221,22 @@
 						echo "\t\t\t\t</tr>\r\n";
 					}
 				?>
+				<?php if ($userRole==1): ?>
+				<tr>
+					<form method="post" class="form-inline" role="form">
+						<td>&nbsp;</td>
+						<td>
+							<div class="form-group">
+								<label class="sr-only" for="InputDistro">Distro</label>
+								<input type="text" autofocus class="form-control" name="InputDistro" id="InputDistro" placeholder="New Distro Name">
+			  				</div>
+			  			</td>
+			  			<td>
+			  				<button type="submit" class="btn btn-success" action="#">Add</button>
+			  			</td>
+					</form>
+				</tr>
+				<?php endif; ?>
               </tbody>
             </table>
           </div> <!-- End Distro Table div -->
@@ -206,7 +253,32 @@
               </thead>
               <tbody>
 
-<!-- PHP Code to output, add, remove Systems -->
+<?php
+					foreach ($systemArray as $systemID => $systemName) {
+						echo "\t\t\t\t<tr>\r\n";
+						echo "\t\t\t\t\t<td>&nbsp;</td>\r\n";
+						echo "\t\t\t\t\t<td>" . $systemName . "</td>\r\n";
+						echo "\t\t\t\t\t<td>\r\n";
+						echo "\t\t\t\t\t</td>\r\n";
+						echo "\t\t\t\t</tr>\r\n";
+					}
+				?>
+				<?php if ($userRole==1): ?>
+				<tr>
+					<form method="post" class="form-inline" role="form">
+						<td>&nbsp;</td>
+						<td>
+							<div class="form-group">
+								<label class="sr-only" for="InputSystem">System</label>
+								<input type="text" autofocus class="form-control" name="InputSystem" id="InputSystem" placeholder="New System Name">
+			  				</div>
+			  			</td>
+			  			<td>
+			  				<button type="submit" class="btn btn-success" action="#">Add</button>
+			  			</td>
+					</form>
+				</tr>
+				<?php endif; ?>
 
               </tbody>
             </table>
