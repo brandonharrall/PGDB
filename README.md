@@ -7,10 +7,6 @@ Uses Bootstrap (included) for ease of design
 
 Requires [MYSQLND] (http://php.net/manual/en/mysqlnd.install.php) (MySQL Native Driver) Please check your phpinfo to ensure it's installed or download via package manager.
 
-###Screenshots
-
-[On DropMocks](http://www.dropmocks.com/mIZB4V)
-
 ###Installation
 
 1. Pull the repo down to your www folder.
@@ -20,11 +16,10 @@ Requires [MYSQLND] (http://php.net/manual/en/mysqlnd.install.php) (MySQL Native 
 5. In phpMyAdmin, change your admin user's Role to 1
 6. Log-in (reauthenticate)
 7. Visit settings to ensure there are no DB updates, disable registration if desired
-8. Until Settings page is complete - add distros (Steam, Retail, PlayStation Store, etc) and systems (PS4, PC, 3DS, etc) manually in the database.
+8. Add distros (Steam, Retail, PlayStation Store, etc) and systems (PS4, PC, 3DS, etc).
 
 ###Planned Enhancements
 
-  * [HIGH] Salt user passwords
   * [MED] Implement search function
   * [HIGH] Complete Settings page
     * Complete Adding Distribution methods
@@ -32,4 +27,6 @@ Requires [MYSQLND] (http://php.net/manual/en/mysqlnd.install.php) (MySQL Native 
   * [MED] Ability to remove user entries and titles
   * [LOW] Feature to upload images (for cover art and distribution methods)
   * [LOW] Have a better display for statistics (games finished, in your list, etc) and fix glyphs/images
+  
   ~~* [LOW] Add multi-user support~~
+  ~~* [HIGH] Salt user passwords~~

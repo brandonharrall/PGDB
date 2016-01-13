@@ -167,9 +167,11 @@
 /**         **/
 	
 	function insertTitle($dbobj,$pSystem,$pTitle,$pGenre,$pActive,$pYear) {
+		$escTitle = $dbobj->real_escape_string($pTitle);
+		$escGenre = $dbobj->real_escape_string($pGenre);
 		$statement = $dbobj->prepare("INSERT INTO `games`.`titles` (`SystemID`, `Title`, `Genre`, `Active`, `ReleaseDate`) " . 
 			"VALUES (?, ?, ?, ?, ?);");
-		$statement->bind_param('issii',$pSystem,$pTitle,$pGenre,$pActive,$pYear);
+		$statement->bind_param('issii',$pSystem,$escTitle,$escGenre,$pActive,$pYear);
 		$statement->execute();
 		$statement->close();
 	}
