@@ -61,8 +61,9 @@
 	
 	//Returns result of all active titles
 	function queryAllTitles($dbobj) {
-		$result = $dbobj->query("SELECT titl.TitleID, titl.Title, titl.Genre, titl.CoverArt " .
+		$result = $dbobj->query("SELECT titl.TitleID, titl.Title, titl.Genre, titl.CoverArt, syst.Name as SystemName, titl.ReleaseDate " .
 			"FROM titles AS titl " . 
+			"JOIN system as syst ON titl.SystemID = syst.ID " .
 			"WHERE titl.Active = 1 " .
 			"ORDER BY titl.Title ASC");
 

@@ -139,7 +139,7 @@
 				?>
 				</select>
 			   </div>
-			  <button type="submit" class="btn btn-success" action="#">Add</button>
+			  <button type="submit" class="btn btn-success" action="#">Add to DB</button>
 			</form>
 <!-- Wrap this with PHP to disable if not admin role -->		  
           <h2 class="sub-header"></h2>
@@ -149,7 +149,9 @@
                 <tr>
                   <th>Cover</th>
                   <th>Title</th>
+				  <th>System</th>
                   <th>Genre</th>
+				  <th>Year</th>
                   <th>Add</th>
                 </tr>
               </thead>
@@ -167,7 +169,9 @@
 								echo "\t\t\t\t\t<td><button onclick=\"UpdateImage('" . $row['CoverArt'] . "')\" type=\"button\" class=\"btn btn-sm btn-info\" data-toggle=\"popover\" title=\"Cover\">Cover</button></td>\r\n";
 							}
 							echo "\t\t\t\t\t<td>" . $row['Title'] . "</td>\r\n";
+							echo "\t\t\t\t\t<td>" . $row['SystemName'] . "</td>\r\n";
 							echo "\t\t\t\t\t<td>" . $row['Genre'] . "</td>\r\n";
+							echo "\t\t\t\t\t<td>" . $row['ReleaseDate'] . "</td>\r\n";
 							echo "\t\t\t\t\t<td>\r\n";
 
 								$numMissing++;
@@ -184,7 +188,9 @@
 								echo "\t\t\t\t\t<td><button onclick=\"UpdateImage('" . $row['CoverArt'] . "')\" type=\"button\" class=\"btn btn-sm btn-info\" data-toggle=\"popover\" title=\"Cover\">Cover</button></td>\r\n";
 							}
 							echo "\t\t\t\t\t<td>" . $row['Title'] . "</td>\r\n";
+							echo "\t\t\t\t\t<td>" . $row['SystemName'] . "</td>\r\n";
 							echo "\t\t\t\t\t<td>" . $row['Genre'] . "</td>\r\n";
+							echo "\t\t\t\t\t<td>" . $row['ReleaseDate'] . "</td>\r\n";
 							echo "\t\t\t\t\t<td>\r\n";
 
 							if (queryDBDoesUserHaveTitle($con,$row['TitleID'], $userID) == "false") {

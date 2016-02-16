@@ -118,8 +118,17 @@ $gamesTotal = $gamesIncomplete + $gamesComplete;
 		<?php buildSideBar($ListType); ?>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
           <h1 class="page-header"><?php echo $activeHeader; ?></h1>
-		  
-          <div class="row placeholders">
+		  		  <div class="row placeholders">
+            <div class="col-xs-6 col-sm-6 placeholder">
+            	<h1><?=$gamesIncomplete?></h1>
+            	Incomplete Games
+            </div>
+            <div class="col-xs-6 col-sm-6 placeholder">
+            	<h1><?=$gamesTotal?></h1>
+            	Total <?=$activeHeader?>
+            </div>
+          </div>
+        <!--  <div class="row placeholders">
             <div class="col-xs-6 col-sm-6 placeholder">
 			  <div class="progress">
 			  	  <div class="progress-bar progress-bar-danger" style="width: <?php echo ($gamesIncomplete / $gamesTotal) * 100; ?>%">
@@ -130,7 +139,7 @@ $gamesTotal = $gamesIncomplete + $gamesComplete;
 				  </div>
 				</div>
             </div>
-          </div>
+          </div>-->
 
           <h2 class="sub-header">Your Games</h2>
           <div class="table-responsive">
