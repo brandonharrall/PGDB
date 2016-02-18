@@ -147,7 +147,6 @@
             <table class="table table-striped">
               <thead>
                 <tr>
-                  <th>Cover</th>
                   <th>Title</th>
 				  <th>System</th>
                   <th>Genre</th>
@@ -162,11 +161,11 @@
 				while($row = $resAllTitles->fetch_array()) {
 					if ($ListType == "missing") {
 						if (queryDBDoesUserHaveTitle($con,$row['TitleID'], $userID) == "false") {
-							echo "\t\t\t\t<tr>\r\n";
 							if ($row['CoverArt'] == "") {
-								echo "\t\t\t\t\t<td></td>\r\n";
+								echo "\t\t\t\t<tr OnMouseOver='changeImage(\"http://placehold.it/120x60\");'>\r\n";
 							} else {
-								echo "\t\t\t\t\t<td><button onclick=\"UpdateImage('" . $row['CoverArt'] . "')\" type=\"button\" class=\"btn btn-sm btn-info\" data-toggle=\"popover\" title=\"Cover\">Cover</button></td>\r\n";
+								echo "\t\t\t\t<tr OnMouseOver='changeImage(\"image/coverart/" . $row['CoverArt'] . "\");'>\r\n";
+								//echo "\t\t\t\t\t<td><button onclick=\"UpdateImage('" .  . "')\" type=\"button\" class=\"btn btn-sm btn-info\" data-toggle=\"popover\" title=\"Cover\">Cover</button></td>\r\n";
 							}
 							echo "\t\t\t\t\t<td>" . $row['Title'] . "</td>\r\n";
 							echo "\t\t\t\t\t<td>" . $row['SystemName'] . "</td>\r\n";
@@ -181,11 +180,11 @@
 							echo "\t\t\t\t</tr>\r\n";
 						}
 					} else {
-							echo "\t\t\t\t<tr>\r\n";
 							if ($row['CoverArt'] == "") {
-								echo "\t\t\t\t\t<td></td>\r\n";
+								echo "\t\t\t\t<tr OnMouseOver='changeImage(\"http://placehold.it/120x60\");'>\r\n";
 							} else {
-								echo "\t\t\t\t\t<td><button onclick=\"UpdateImage('" . $row['CoverArt'] . "')\" type=\"button\" class=\"btn btn-sm btn-info\" data-toggle=\"popover\" title=\"Cover\">Cover</button></td>\r\n";
+								echo "\t\t\t\t<tr OnMouseOver='changeImage(\"image/coverart/" . $row['CoverArt'] . "\");'>\r\n";
+								//echo "\t\t\t\t\t<td><button onclick=\"UpdateImage('" .  . "')\" type=\"button\" class=\"btn btn-sm btn-info\" data-toggle=\"popover\" title=\"Cover\">Cover</button></td>\r\n";
 							}
 							echo "\t\t\t\t\t<td>" . $row['Title'] . "</td>\r\n";
 							echo "\t\t\t\t\t<td>" . $row['SystemName'] . "</td>\r\n";

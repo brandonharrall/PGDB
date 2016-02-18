@@ -112,6 +112,10 @@ NAVBAR;
         	</ul>
         	<ul class="nav nav-sidebar">
         	</ul>
+
+        	<div id="main_img">
+			    <img id="gamecover" src="http://placehold.it/110x110">
+			</div>
         </div>
 
 SIDEBAR;
