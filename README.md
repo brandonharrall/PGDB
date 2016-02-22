@@ -2,7 +2,14 @@
 ##Plavatos Game Database
 _A working PHP/JS/MySQL site used to keep track of games_
 
+###Features
+
+ * Secure user password storage (stored as SHA256 and salted)
+ * Download cover-art for games by clicking on their title (in the "All Games" and "Missing" lists only for now). Uses [TheGamesDB] (http://thegamesdb.net).
+ * Multi-User support with ability to disable registration
+
 ###Requirements
+
 Uses Bootstrap (included) for ease of design
 
 Requires [MYSQLND] (http://php.net/manual/en/mysqlnd.install.php) (MySQL Native Driver) Please check your phpinfo to ensure it's installed or download via package manager.
@@ -24,9 +31,7 @@ Requires [MYSQLND] (http://php.net/manual/en/mysqlnd.install.php) (MySQL Native 
   * [HIGH] Complete Settings page
     * Complete Adding Distribution methods
     * Add Systems management
-  * [MED] Ability to remove user entries and titles
-  * [LOW] Feature to upload images (for cover art and distribution methods)
-  * [LOW] Have a better display for statistics (games finished, in your list, etc) and fix glyphs/images
-  
-  ~~* [LOW] Add multi-user support~~
-  ~~* [HIGH] Salt user passwords~~
+    * Ability to disable coverart downloading or make it a user-role
+    * User management for admins to change roles
+  * [MED] Ability to remove/rename user entries and titles
+  * [MED] Batch update covers for all titles and auto-resize to prevent large files consuming bandwidth

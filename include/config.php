@@ -15,5 +15,6 @@
 	
 	define('CURDBVERS', '1');
 	define('CURVERS', '0.1');
+	define('COVERIMGPATH', 'C:\\www\\pgdb\\image\\coverart\\');
 
 ?> 

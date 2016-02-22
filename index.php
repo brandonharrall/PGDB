@@ -162,10 +162,9 @@
 					if ($ListType == "missing") {
 						if (queryDBDoesUserHaveTitle($con,$row['TitleID'], $userID) == "false") {
 							if ($row['CoverArt'] == "") {
-								echo "\t\t\t\t<tr OnMouseOver='changeImage(\"http://placehold.it/120x60\");'>\r\n";
+								echo "\t\t\t\t<tr OnClick='getData(" . $row['TitleID'] . ",\"" . $row['Title'] . "\");' OnMouseEnter='changeImage(\"http://placehold.it/120x60\");'>\r\n";
 							} else {
-								echo "\t\t\t\t<tr OnMouseOver='changeImage(\"image/coverart/" . $row['CoverArt'] . "\");'>\r\n";
-								//echo "\t\t\t\t\t<td><button onclick=\"UpdateImage('" .  . "')\" type=\"button\" class=\"btn btn-sm btn-info\" data-toggle=\"popover\" title=\"Cover\">Cover</button></td>\r\n";
+								echo "\t\t\t\t<tr OnMouseEnter='changeImage(\"image/coverart/" . $row['CoverArt'] . "\");'>\r\n";
 							}
 							echo "\t\t\t\t\t<td>" . $row['Title'] . "</td>\r\n";
 							echo "\t\t\t\t\t<td>" . $row['SystemName'] . "</td>\r\n";
@@ -181,10 +180,9 @@
 						}
 					} else {
 							if ($row['CoverArt'] == "") {
-								echo "\t\t\t\t<tr OnMouseOver='changeImage(\"http://placehold.it/120x60\");'>\r\n";
+								echo "\t\t\t\t<tr OnClick='getData(" . $row['TitleID'] . ",\"" . $row['Title'] . "\");' OnMouseEnter='changeImage(\"http://placehold.it/120x60\");'>\r\n";
 							} else {
-								echo "\t\t\t\t<tr OnMouseOver='changeImage(\"image/coverart/" . $row['CoverArt'] . "\");'>\r\n";
-								//echo "\t\t\t\t\t<td><button onclick=\"UpdateImage('" .  . "')\" type=\"button\" class=\"btn btn-sm btn-info\" data-toggle=\"popover\" title=\"Cover\">Cover</button></td>\r\n";
+								echo "\t\t\t\t<tr OnMouseEnter='changeImage(\"image/coverart/" . $row['CoverArt'] . "\");'>\r\n";
 							}
 							echo "\t\t\t\t\t<td>" . $row['Title'] . "</td>\r\n";
 							echo "\t\t\t\t\t<td>" . $row['SystemName'] . "</td>\r\n";

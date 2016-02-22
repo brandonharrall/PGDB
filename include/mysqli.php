@@ -230,6 +230,13 @@
 		$statement->execute();
 		$statement->close();
 	}
+
+	function updateCoverForTitle($dbobj,$pCoverPath,$pEntryID) {
+		$statement = $dbobj->prepare("UPDATE games.titles SET CoverArt=? WHERE TitleID=?;");
+		$statement->bind_param('ii',$pCoverPath,$pEntryID);
+		$statement->execute();
+		$statement->close();
+	}
 	
 /**         **/
 /** DELETES **/

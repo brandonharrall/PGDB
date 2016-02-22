@@ -114,7 +114,7 @@ NAVBAR;
         	</ul>
 
         	<div id="main_img">
-			    <img id="gamecover" src="http://placehold.it/110x110">
+			    <img id="gamecover" class="img-thumbnail" src="http://placehold.it/110x110">
 			</div>
         </div>
 

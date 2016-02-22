@@ -41,3 +41,19 @@ function UpdateModal(pEntryID,pTitle,pProgress,pWanted,pAcquired,pPriority,pRati
 function changeImage(a) {
 	document.getElementById("gamecover").src=a;
 }
+
+function getData( id, name ) {
+	//Start an ajax call to grabcover.php and hand off the TitleID and Name
+    $.ajax({
+        url : 'grabcover.php',
+        type: 'GET',
+        data: "id=" + id + "&name=" + name,
+        success : handleData
+
+    })
+}
+
+function handleData(data) {
+	//On successful call, just do an alert for now
+    alert(data);
+}
