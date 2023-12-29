@@ -1,5 +1,5 @@
 # PGDB
-##Plavatos Game Database
+##Game Database
 _A working PHP/JS/MySQL site used to keep track of games_
 
 ###Features
